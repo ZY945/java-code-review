@@ -1,0 +1,86 @@
+###
+GET http://localhost:8080/hello
+
+<> 2025-03-25T172836.200.txt
+###
+POST http://localhost:8080/hello
+
+<> 2025-03-25T172828.200.txt
+
+###
+GET http://localhost:8080/hi
+
+<> 2025-03-25T172921.200.txt
+
+###
+POST http://localhost:8080/hi
+
+<> 2025-03-25T172923.405.json
+
+###
+POST http://localhost:8080/param?
+    name={{$random.alphanumeric(8)}}&test=1213
+
+###
+GET http://localhost:8080/param?
+    name={{$random.alphanumeric(8)}}
+Content-Type: application/json
+
+{
+  "test": "1213"
+}
+
+<> 2025-03-25T175018.200.txt
+<> 2025-03-25T175013.200.txt
+<> 2025-03-25T175000.405.json
+<> 2025-03-25T174951.200.txt
+<> 2025-03-25T174852.200.txt
+<> 2025-03-25T174811.200.txt
+
+###
+GET http://localhost:8080/path/1?
+    name={{$random.alphanumeric(8)}}
+
+###
+GET http://localhost:8080/path/2/2
+
+<> 2025-03-25T175932.200.txt
+<> 2025-03-25T175928.200.txt
+<> 2025-03-25T175924.200.txt
+
+###
+GET http://localhost:8080/header
+User-Agent: {{ $random.userAgent }}
+
+<> 2025-03-25T180151.200.txt
+
+###
+GET http://localhost:8080/getSessions
+
+<> 2025-03-25T181017.200.txt
+<> 2025-03-25T181007.200.txt
+
+###
+GET http://localhost:8080/getSession
+
+<> 2025-03-25T181113.200.txt
+<> 2025-03-25T181104.200.txt
+<> 2025-03-25T181027.400.json
+
+###
+GET http://localhost:8080/setSession
+
+<> 2025-03-25T181110.200.txt
+<> 2025-03-25T181102.200.txt
+
+###
+GET http://localhost:8080/getSessions
+
+<> 2025-03-25T181148.200.txt
+<> 2025-03-25T181147.200.txt
+<> 2025-03-25T181146.200.txt
+<> 2025-03-25T181143.200.txt
+
+
+### 测试自定义CustomHandler
+GET http://localhost:8080/custom?type=view
