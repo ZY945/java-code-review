@@ -14,6 +14,7 @@
     <modules>
         <module>springboot-bean</module>
         <module>springboot-mvc</module>
+        <module>springboot-server</module>
     </modules>
 
     <properties>

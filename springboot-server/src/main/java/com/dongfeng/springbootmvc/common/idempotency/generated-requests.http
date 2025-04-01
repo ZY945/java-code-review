@@ -1,0 +1,21 @@
+### 幂等请求
+
+### 获取token
+GET http://localhost:8080/token
+X-User-Id: 10001
+X-Service-Name: test
+
+<> 2025-03-31T230743.200.txt
+<> 2025-03-31T230716.200.txt
+
+### 携带token请求
+POST http://localhost:8080/test?
+    key={{$random.alphanumeric(8)}}
+    Content-Type: application/x-www-form-urlencoded
+X-User-Id: 10001
+X-Service-Name: test
+token:8f592b81-b953-4fbc-980a-249cb9b0063d
+
+<> 2025-03-31T230726.200.json
+<> 2025-03-31T230725.200.txt
+<> 2025-03-31T225854.200.json

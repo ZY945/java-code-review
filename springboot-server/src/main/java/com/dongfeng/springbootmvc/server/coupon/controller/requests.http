@@ -1,0 +1,29 @@
+### 1. 创建优惠券模板
+POST http://localhost:8080/api/v1/coupons/templates
+Content-Type: application/json
+
+{
+  "name": "双11优惠券测试-10000张",
+  "description": "满100减50",
+  "type": 1,
+  "discount": 50.00,
+  "threshold": 100.00,
+  "total": 10000,
+  "startTime": "2025-06-01T00:00:00",
+  "endTime": "2025-12-31T23:59:59"
+}
+
+### 2. 查询可用优惠券模板列表
+GET http://localhost:8080/api/v1/coupons/templates
+
+### 3. 预热优惠券库存到Redis
+POST http://localhost:8080/api/v1/coupon/seckill/preload/1
+Content-Type: application/json
+
+### 4. 秒杀抢券
+POST http://localhost:8080/api/v1/coupon/seckill/1
+X-User-Id: 10001
+
+### 5. 查询用户优惠券
+GET http://localhost:8080/api/v1/coupons/my
+X-User-Id: 10001 
