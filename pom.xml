@@ -12,9 +12,12 @@
     <name>springboot2-jdk8-study</name>
     <description>springboot2-jdk8-study</description>
     <modules>
+        <module>springboot-DemoModule</module>
         <module>springboot-bean</module>
         <module>springboot-mvc</module>
         <module>springboot-server</module>
+        <module>springboot-Transactional</module>
+        <module>springboot-DemoModule</module>
     </modules>
 
     <properties>
@@ -40,37 +43,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions><!-- 去掉springboot默认配置 -->
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-    </dependencies>
 
     <build>
         <plugins>
