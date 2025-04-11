@@ -20,7 +20,7 @@
         <module>springboot-FileHandler</module>
         <module>springboot-Proxy</module>
         <module>netty</module>
-        <module>Java-start-study</module>
+        <module>Java-study</module>
     </modules>
 
     <properties>
