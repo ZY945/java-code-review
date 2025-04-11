@@ -55,7 +55,7 @@ public class TokenController {
      * @return 执行结果
      */
     @PostMapping("/test")
-    @ApiIdempotent(value = "test",message = "请勿重复调用")
+    @ApiIdempotent(value = "test", message = "请勿重复调用")
     public String test(@RequestParam("key") String key) {
         Boolean delResult = redisTemplate.delete(key);
 

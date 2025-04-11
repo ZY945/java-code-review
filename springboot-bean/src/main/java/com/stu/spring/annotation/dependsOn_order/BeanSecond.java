@@ -4,7 +4,6 @@ package com.stu.spring.annotation.dependsOn_order;
 import lombok.Data;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component

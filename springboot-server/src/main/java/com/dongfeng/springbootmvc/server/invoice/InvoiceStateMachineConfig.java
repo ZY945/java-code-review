@@ -15,7 +15,7 @@ public class InvoiceStateMachineConfig extends StateMachineConfigurerAdapter<Inv
     @Override
     public void configure(StateMachineStateConfigurer<InvoiceState, InvoiceEvent> states) throws Exception {
         states
-            .withStates()
+                .withStates()
                 .initial(InvoiceState.INITIAL)  // 初始状态
                 .states(EnumSet.allOf(InvoiceState.class)); // 所有状态
     }
@@ -23,16 +23,16 @@ public class InvoiceStateMachineConfig extends StateMachineConfigurerAdapter<Inv
     @Override
     public void configure(StateMachineTransitionConfigurer<InvoiceState, InvoiceEvent> transitions) throws Exception {
         transitions
-            .withExternal()
+                .withExternal()
                 .source(InvoiceState.INITIAL).target(InvoiceState.APPLIED).event(InvoiceEvent.SUBMIT) // 提交申请
-            .and()
-            .withExternal()
+                .and()
+                .withExternal()
                 .source(InvoiceState.APPLIED).target(InvoiceState.ISSUED).event(InvoiceEvent.APPROVE) // 申请通过
-            .and()
-            .withExternal()
+                .and()
+                .withExternal()
                 .source(InvoiceState.ISSUED).target(InvoiceState.CANCELLED).event(InvoiceEvent.CANCEL) // 红冲
-            .and()
-            .withExternal()
+                .and()
+                .withExternal()
                 .source(InvoiceState.CANCELLED).target(InvoiceState.ISSUED).event(InvoiceEvent.REISSUE); // 重开票
     }
 }

@@ -1,4 +1,5 @@
 接口说明：
+
 1. 创建优惠券模板
    路径: POST /api/v1/coupons/templates
    功能: 创建新的优惠券模板
@@ -33,6 +34,7 @@
 死信队列（Dead Letter Queue，DLQ）在消息中间件中是一个重要的设计模式，主要用于处理无法被正常消费的消息。在我们的优惠券系统中使用死信队列有以下几个重要原因：
 
 1. **处理失败消息**
+
 ```java
 @RabbitListener(queues = RabbitMQConfig.COUPON_QUEUE)
 public void handleCouponMessage(CouponMessage message) {
@@ -46,6 +48,7 @@ public void handleCouponMessage(CouponMessage message) {
 ```
 
 2. **消息重试机制**
+
 ```java
 @Bean
 public Queue couponQueue() {
@@ -59,6 +62,7 @@ public Queue couponQueue() {
 ```
 
 3. **监控和告警**
+
 ```java:src/main/java/com/dongfeng/springbootmvc/coupon/mq/DeadLetterQueueListener.java
 @Component
 @Slf4j
@@ -95,6 +99,7 @@ public class DeadLetterQueueListener {
 ```
 
 4. **业务补偿机制**
+
 ```java:src/main/java/com/dongfeng/springbootmvc/coupon/service/FailedMessageProcessor.java
 @Service
 @Slf4j
@@ -133,28 +138,28 @@ public class FailedMessageProcessor {
 使用死信队列的主要好处：
 
 1. **可靠性保证**
-   - 不会丢失消息
-   - 可以追踪每条消息的处理状态
-   - 支持消息重试机制
+    - 不会丢失消息
+    - 可以追踪每条消息的处理状态
+    - 支持消息重试机制
 
 2. **问题诊断**
-   - 可以查看失败原因
-   - 记录失败时的上下文信息
-   - 便于排查问题
+    - 可以查看失败原因
+    - 记录失败时的上下文信息
+    - 便于排查问题
 
 3. **业务补偿**
-   - 支持手动重试
-   - 可以实现定时重试
-   - 灵活的补偿策略
+    - 支持手动重试
+    - 可以实现定时重试
+    - 灵活的补偿策略
 
 4. **监控告警**
-   - 及时发现问题
-   - 统计失败率
-   - 预警异常情况
+    - 及时发现问题
+    - 统计失败率
+    - 预警异常情况
 
 5. **运维管理**
-   - 查看死信消息
-   - 手动处理异常
-   - 统计分析问题
+    - 查看死信消息
+    - 手动处理异常
+    - 统计分析问题
 
 这样的设计可以确保在分布式系统中消息处理的可靠性，即使出现异常情况，也能保证业务最终一致性。

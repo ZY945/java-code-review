@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface CouponTemplateRepository extends JpaRepository<CouponTemplate, Long> {
-    
+
     @Modifying
     @Query("UPDATE CouponTemplate c SET c.remaining = c.remaining - 1 WHERE c.id = :id AND c.remaining > 0")
     int decreaseStock(@Param("id") Long id);
@@ -20,9 +20,9 @@ public interface CouponTemplateRepository extends JpaRepository<CouponTemplate, 
     @Modifying
     @Query("UPDATE CouponTemplate c SET c.remaining = c.remaining - :count WHERE c.id = :id AND c.remaining >= :count")
     int decreaseStock(@Param("id") Long id, @Param("count") Integer count);
-    
+
     @Query("SELECT c FROM CouponTemplate c WHERE c.id = :id AND c.status = 2 AND c.remaining > 0")
     CouponTemplate findAvailableTemplate(@Param("id") Long id);
-    
+
     List<CouponTemplate> findByStatus(Integer status);
 } 

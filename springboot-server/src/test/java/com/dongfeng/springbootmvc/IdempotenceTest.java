@@ -1,6 +1,5 @@
 package com.dongfeng.springbootmvc;
 
-import junit.framework.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,13 +19,14 @@ import org.springframework.web.context.WebApplicationContext;
 public class IdempotenceTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
+
     @Test
     public void interfaceIdempotenceTest() throws Exception {
         // 初始化 MockMvc
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         // 调用获取 Token 接口
         String token = mockMvc.perform(MockMvcRequestBuilders.get("/token")
-                .accept(MediaType.TEXT_HTML))
+                        .accept(MediaType.TEXT_HTML))
                 .andReturn()
                 .getResponse().getContentAsString();
         log.info("获取的 Token 串：{}", token);
@@ -35,8 +35,8 @@ public class IdempotenceTest {
             log.info("第{}次调用测试接口", i);
             // 调用验证接口并打印结果
             String result = mockMvc.perform(MockMvcRequestBuilders.post("/test")
-                    .header("token", token)
-                    .accept(MediaType.TEXT_HTML))
+                            .header("token", token)
+                            .accept(MediaType.TEXT_HTML))
                     .andReturn().getResponse().getContentAsString();
             log.info(result);
             // 结果断言

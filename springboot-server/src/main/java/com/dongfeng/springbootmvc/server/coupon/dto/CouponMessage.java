@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class CouponMessage implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private Long templateId;
     private Long userId;
 } 

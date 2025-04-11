@@ -21,10 +21,10 @@ public class CustomHandlerAdapter implements HandlerAdapter {
         String type = request.getParameter("type");
         String result = customHandler.handle(type);
 
-        if("view".equals(type)){
+        if ("view".equals(type)) {
             // 使用ModelAndView需要添加spring-boot-starter-thymeleaf.同时保证在resources存在templates/{viewName}.html
             return new ModelAndView("customView", "result", result);
-        }else {
+        } else {
             // 直接写入响应
             response.setContentType("text/plain;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_OK); // 200 OK

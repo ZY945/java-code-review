@@ -6,6 +6,7 @@ import lombok.Data;
 public class Service {
     private String id;
     private String name;
+
     public void say() {
         System.out.println("This is a Service");
     }

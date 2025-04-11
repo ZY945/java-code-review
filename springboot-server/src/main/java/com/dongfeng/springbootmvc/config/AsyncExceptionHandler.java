@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 @Slf4j
 @Configuration
 public class AsyncExceptionHandler implements AsyncConfigurer {
-    
+
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return new AsyncUncaughtExceptionHandler() {

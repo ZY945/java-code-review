@@ -17,7 +17,10 @@
         <module>springboot-mvc</module>
         <module>springboot-server</module>
         <module>springboot-Transactional</module>
-        <module>springboot-DemoModule</module>
+        <module>springboot-FileHandler</module>
+        <module>springboot-Proxy</module>
+        <module>netty</module>
+        <module>Java-start-study</module>
     </modules>
 
     <properties>
@@ -49,6 +52,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
             </plugin>
         </plugins>
     </build>

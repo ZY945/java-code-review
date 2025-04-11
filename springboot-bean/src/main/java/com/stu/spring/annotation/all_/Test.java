@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 
 //@Component
 @Slf4j
-public class Test implements CommandLineRunner,InitializingBean, DisposableBean {
+public class Test implements CommandLineRunner, InitializingBean, DisposableBean {
 
     private String name;
 

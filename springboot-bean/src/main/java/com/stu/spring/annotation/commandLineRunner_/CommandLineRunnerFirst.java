@@ -3,7 +3,6 @@ package com.stu.spring.annotation.commandLineRunner_;
 
 import lombok.Data;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 // 实现CommandLineRunner需要被定义为bean时，run方法才会在springboot启动时自动加载
 //@Component

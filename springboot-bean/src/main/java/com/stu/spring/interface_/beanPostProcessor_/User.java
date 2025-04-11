@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Data
 public class User {
 
-	@Value("student")
-	private String type;
+    @Value("student")
+    private String type;
 
 }

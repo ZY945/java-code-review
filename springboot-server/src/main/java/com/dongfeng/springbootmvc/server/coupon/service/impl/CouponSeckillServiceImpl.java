@@ -1,12 +1,12 @@
 package com.dongfeng.springbootmvc.server.coupon.service.impl;
 
 import com.dongfeng.springbootmvc.common.BizException;
+import com.dongfeng.springbootmvc.server.coupon.dto.PreloadRequest;
 import com.dongfeng.springbootmvc.server.coupon.entity.CouponTemplate;
 import com.dongfeng.springbootmvc.server.coupon.repository.CouponTemplateRepository;
 import com.dongfeng.springbootmvc.server.coupon.repository.UserCouponRepository;
 import com.dongfeng.springbootmvc.server.coupon.service.CouponSeckillService;
 import com.dongfeng.springbootmvc.server.coupon.service.MessageService;
-import com.dongfeng.springbootmvc.server.coupon.dto.PreloadRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -19,9 +19,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -44,7 +44,7 @@ public class CouponSeckillServiceImpl implements CouponSeckillService {
     public void preloadCouponToRedis(PreloadRequest request) {
         String stockKey = STOCK_KEY_PREFIX + request.getTemplateId();
         String activityKey = ACTIVITY_KEY_PREFIX + request.getActivityId();
-        
+
         // 1. 检查Redis中是否已存在库存,避免重复预热
         if (Boolean.TRUE.equals(redisTemplate.hasKey(activityKey))) {
             throw new BizException(400, "该活动优惠券已被预热");
@@ -56,17 +56,17 @@ public class CouponSeckillServiceImpl implements CouponSeckillService {
                 // 2.1 检查优惠券模板是否存在且有效
                 CouponTemplate template = templateRepository.findById(request.getTemplateId())
                         .orElseThrow(() -> new BizException(404, "优惠券模板不存在"));
-                
+
                 if (template.getRemaining() < request.getCount()) {
                     throw new BizException(400, "库存不足");
                 }
-                
+
                 // 2.2 扣减数据库库存
                 int updated = templateRepository.decreaseStock(
-                    request.getTemplateId(), 
-                    request.getCount()
+                        request.getTemplateId(),
+                        request.getCount()
                 );
-                
+
                 if (updated == 0) {
                     throw new BizException(400, "扣减库存失败");
                 }
@@ -76,32 +76,32 @@ public class CouponSeckillServiceImpl implements CouponSeckillService {
                     @Override
                     public Object execute(RedisOperations operations) throws DataAccessException {
                         operations.multi();
-                        
+
                         // 设置库存
                         operations.opsForValue().set(
-                            stockKey, 
-                            String.valueOf(request.getCount()),
-                            24, 
-                            TimeUnit.HOURS
+                                stockKey,
+                                String.valueOf(request.getCount()),
+                                24,
+                                TimeUnit.HOURS
                         );
-                        
+
                         // 设置活动信息
                         Map<String, String> activityInfo = new HashMap<>();
                         activityInfo.put("templateId", request.getTemplateId().toString());
                         activityInfo.put("count", request.getCount().toString());
                         activityInfo.put("startTime", request.getStartTime().toString());
                         activityInfo.put("endTime", request.getEndTime().toString());
-                        
+
                         operations.opsForHash().putAll(activityKey, activityInfo);
                         operations.expire(activityKey, 24, TimeUnit.HOURS);
-                        
+
                         return operations.exec();
                     }
                 });
-                
-                log.info("优惠券预热成功: templateId={}, count={}, activityId={}", 
-                    request.getTemplateId(), request.getCount(), request.getActivityId());
-                
+
+                log.info("优惠券预热成功: templateId={}, count={}, activityId={}",
+                        request.getTemplateId(), request.getCount(), request.getActivityId());
+
                 return null;
             } catch (Exception e) {
                 status.setRollbackOnly();
@@ -115,7 +115,7 @@ public class CouponSeckillServiceImpl implements CouponSeckillService {
     public void seckill(Long templateId, Long userId) {
         String stockKey = STOCK_KEY_PREFIX + templateId;
         String limitKey = LIMIT_KEY_PREFIX + templateId + ":" + userId;
-        
+
         try {
             // 1. 用户限制检查
             Boolean notLimited = redisTemplate.opsForValue().setIfAbsent(limitKey, "1", 24, TimeUnit.HOURS);
@@ -144,7 +144,7 @@ public class CouponSeckillServiceImpl implements CouponSeckillService {
                 handleFailure(stockKey, limitKey);
                 throw new BizException("系统繁忙，请稍后再试");
             });
-            
+
         } catch (BizException e) {
             throw e;
         } catch (Exception e) {

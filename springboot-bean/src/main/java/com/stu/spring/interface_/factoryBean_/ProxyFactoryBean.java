@@ -1,7 +1,6 @@
 package com.stu.spring.interface_.factoryBean_;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.stereotype.Component;
 
 //@Component()
 public class ProxyFactoryBean implements FactoryBean<OldBean> {

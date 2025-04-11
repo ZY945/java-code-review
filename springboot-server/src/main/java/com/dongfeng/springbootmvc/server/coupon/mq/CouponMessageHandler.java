@@ -5,12 +5,12 @@ import com.dongfeng.springbootmvc.server.coupon.entity.UserCoupon;
 import com.dongfeng.springbootmvc.server.coupon.repository.CouponTemplateRepository;
 import com.dongfeng.springbootmvc.server.coupon.repository.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 @RequiredArgsConstructor
@@ -21,9 +21,9 @@ public class CouponMessageHandler {
     private static final Logger log = LoggerFactory.getLogger(CouponMessageHandler.class);
 
     @Retryable(
-        value = Exception.class,
-        maxAttempts = 3,
-        backoff = @Backoff(delay = 1000, multiplier = 2)
+            value = Exception.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 1000, multiplier = 2)
     )
     @Transactional(rollbackFor = Exception.class)
     public void handleCouponGrab(Long templateId, Long userId) {

@@ -16,7 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -28,10 +32,10 @@ public class CouponServiceImpl implements CouponService {
     private final StringRedisTemplate redisTemplate;
     private final CouponTemplateRepository templateRepository;
     private final UserCouponRepository userCouponRepository;
-    
+
     private static final String COUPON_LOCK_PREFIX = "coupon:lock:";
     private static final String TEMPLATE_CACHE_PREFIX = "coupon:template:";
-    
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void grabCoupon(Long templateId, Long userId) {
@@ -45,34 +49,34 @@ public class CouponServiceImpl implements CouponService {
             if (Boolean.FALSE.equals(locked)) {
                 throw new BizException(400, "重复请求");
             }
-            
+
             // 检查优惠券是否可用
             CouponTemplate template = templateRepository.findAvailableTemplate(templateId);
             if (template == null) {
                 throw new BizException(400, "优惠券不可用");
             }
-            
+
             // 检查是否已领取
             if (userCouponRepository.countByUserIdAndTemplateId(userId, templateId) > 0) {
                 throw new BizException(400, "已经领取过该优惠券");
             }
-            
+
             // 扣减库存
             int updated = templateRepository.decreaseStock(templateId);
             if (updated == 0) {
                 throw new BizException(400, "优惠券已抢光");
             }
-            
+
             // 保存用户优惠券
             UserCoupon userCoupon = new UserCoupon();
             userCoupon.setUserId(userId);
             userCoupon.setTemplateId(templateId);
             userCoupon.setStatus(1);
             userCouponRepository.save(userCoupon);
-            
+
             // 清除相关缓存
             redisTemplate.delete(TEMPLATE_CACHE_PREFIX + templateId);
-            
+
             log.info("用户{}成功领取优惠券{}", userId, templateId);
         } catch (BizException e) {
             throw e;
@@ -83,7 +87,7 @@ public class CouponServiceImpl implements CouponService {
             redisTemplate.delete(lockKey);
         }
     }
-    
+
     @Override
     @Cacheable(value = "userCoupons", key = "#userId")
     public List<CouponResponse> getUserCoupons(Long userId) {
@@ -97,31 +101,31 @@ public class CouponServiceImpl implements CouponService {
             if (CollectionUtils.isEmpty(userCoupons)) {
                 return Collections.emptyList();
             }
-            
+
             // 批量查询优惠券模板
             Set<Long> templateIds = userCoupons.stream()
-                .map(UserCoupon::getTemplateId)
-                .collect(Collectors.toSet());
-            
+                    .map(UserCoupon::getTemplateId)
+                    .collect(Collectors.toSet());
+
             Map<Long, CouponTemplate> templateMap = templateRepository.findAllById(templateIds)
-                .stream()
-                .collect(Collectors.toMap(CouponTemplate::getId, template -> template));
-            
+                    .stream()
+                    .collect(Collectors.toMap(CouponTemplate::getId, template -> template));
+
             // 组装响应数据
             return userCoupons.stream()
-                .map(userCoupon -> {
-                    CouponTemplate template = templateMap.get(userCoupon.getTemplateId());
-                    if (template == null) {
-                        log.warn("Template {} not found for user coupon {}", userCoupon.getTemplateId(), userCoupon.getId());
-                        return null;
-                    }
-                    CouponResponse response = convertToResponse(template);
-                    response.setUserCouponId(userCoupon.getId());
-                    response.setStatus(userCoupon.getStatus());
-                    return response;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                    .map(userCoupon -> {
+                        CouponTemplate template = templateMap.get(userCoupon.getTemplateId());
+                        if (template == null) {
+                            log.warn("Template {} not found for user coupon {}", userCoupon.getTemplateId(), userCoupon.getId());
+                            return null;
+                        }
+                        CouponResponse response = convertToResponse(template);
+                        response.setUserCouponId(userCoupon.getId());
+                        response.setStatus(userCoupon.getStatus());
+                        return response;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Error while getting user coupons for user: {}", userId, e);
             throw e;
@@ -142,7 +146,7 @@ public class CouponServiceImpl implements CouponService {
         template.setStartTime(request.getStartTime());
         template.setEndTime(request.getEndTime());
         template.setStatus(1);
-        
+
         CouponTemplate saved = templateRepository.save(template);
         return convertToResponse(saved);
     }
@@ -155,10 +159,10 @@ public class CouponServiceImpl implements CouponService {
             if (CollectionUtils.isEmpty(templates)) {
                 return Collections.emptyList();
             }
-            
+
             return templates.stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Error while listing available templates", e);
             throw e;

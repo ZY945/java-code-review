@@ -1,8 +1,5 @@
 package com.stu.spring.annotation.primary;
 
-import com.stu.spring.annotation.import_.Test_Import;
-import com.stu.spring.interface_.factoryBean_.ProxyFactoryBean;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -10,12 +7,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class AnnotationTestDemo {
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext applicationContext=new AnnotationConfigApplicationContext(Bean_Primary.class);  //这里的参数代表要做操作的类
+        AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Bean_Primary.class);  //这里的参数代表要做操作的类
 //        AnnotationConfigApplicationContext applicationContext=new AnnotationConfigApplicationContext("");  //这里的参数代表scan的包路径
 
 //        ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
         String[] beanDefinitionNames = applicationContext.getBeanDefinitionNames();
-        for (String name : beanDefinitionNames){
+        for (String name : beanDefinitionNames) {
             System.out.println(name);
         }
 

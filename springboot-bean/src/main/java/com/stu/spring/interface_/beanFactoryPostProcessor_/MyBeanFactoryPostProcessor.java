@@ -10,22 +10,22 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
-	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
-		// 修改bean的属性
-		BeanDefinition userBeanDefinition = beanFactory.getBeanDefinition("user");
-		MutablePropertyValues propertyValues = userBeanDefinition.getPropertyValues();
-		propertyValues.add("type", "teacher");
-
-
-		// 注册一个新的bean
-		GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
-		genericBeanDefinition.setBeanClass(User.class);
-		genericBeanDefinition.getPropertyValues().add("type","worker");
+        // 修改bean的属性
+        BeanDefinition userBeanDefinition = beanFactory.getBeanDefinition("user");
+        MutablePropertyValues propertyValues = userBeanDefinition.getPropertyValues();
+        propertyValues.add("type", "teacher");
 
 
-		((DefaultListableBeanFactory)beanFactory).registerBeanDefinition("worker",genericBeanDefinition);
+        // 注册一个新的bean
+        GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
+        genericBeanDefinition.setBeanClass(User.class);
+        genericBeanDefinition.getPropertyValues().add("type", "worker");
 
-	}
+
+        ((DefaultListableBeanFactory) beanFactory).registerBeanDefinition("worker", genericBeanDefinition);
+
+    }
 }

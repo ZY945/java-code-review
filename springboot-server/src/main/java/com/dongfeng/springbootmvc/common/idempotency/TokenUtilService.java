@@ -20,6 +20,7 @@ public class TokenUtilService {
      * 存入 Redis 的 Token 键的前缀
      */
     private static final String IDEMPOTENT_TOKEN_PREFIX = "idempotent_token:";
+
     /**
      * 创建 Token 存入 Redis，并返回该 Token
      *
@@ -35,6 +36,7 @@ public class TokenUtilService {
         // 返回 Token
         return token;
     }
+
     /**
      * 验证 Token 正确性
      *

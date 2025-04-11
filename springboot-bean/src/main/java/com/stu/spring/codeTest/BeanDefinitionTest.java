@@ -20,7 +20,7 @@ public class BeanDefinitionTest {
         factory.registerBeanDefinition("beanDefinitionDemo", definition);
 
 
-        BeanDefinitionFactoryBeanDemo factoryBean = factory.getBean("&beanDefinitionDemo",BeanDefinitionFactoryBeanDemo.class);
+        BeanDefinitionFactoryBeanDemo factoryBean = factory.getBean("&beanDefinitionDemo", BeanDefinitionFactoryBeanDemo.class);
         BeanDefinitionDemo user = factory.getBean("beanDefinitionDemo", BeanDefinitionDemo.class);
         System.out.println("工厂Bean：" + factoryBean + ", 创建的实例：" + factoryBean.getObject());
         System.out.println("直接获取普通Bean: " + user);

@@ -15,10 +15,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Service
 @RequiredArgsConstructor
 public class MessageService {
-    
+
     private final RabbitTemplate rabbitTemplate;
     private final ThreadPoolExecutor couponTaskExecutor;
-    
+
     @Async("couponTaskExecutor")
     public CompletableFuture<Boolean> sendToMessageQueue(Long templateId, Long userId) {
         return CompletableFuture.supplyAsync(() -> {

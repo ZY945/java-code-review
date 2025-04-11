@@ -6,34 +6,39 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.annotation.PreDestroy;
-import java.util.concurrent.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @EnableAsync
 @Configuration
 public class ThreadPoolConfig {
-    
+
     /**
      * 获取CPU核心数
      */
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
-    
+
     /**
      * 核心线程数 = CPU核心数 + 1
      */
     private static final int CORE_POOL_SIZE = CPU_COUNT + 1;
-    
+
     /**
      * 最大线程数 = CPU核心数 * 2 + 1
      */
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
-    
+
     /**
      * 队列容量 = 1000
      */
     private static final int QUEUE_CAPACITY = 1000;
-    
+
     /**
      * 线程空闲时间 = 60s
      */
@@ -42,33 +47,34 @@ public class ThreadPoolConfig {
     @Bean("couponTaskExecutor")
     public ThreadPoolExecutor couponTaskExecutor() {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
-            CORE_POOL_SIZE,
-            MAXIMUM_POOL_SIZE,
-            KEEP_ALIVE_TIME,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(QUEUE_CAPACITY),
-            new ThreadFactory() {
-                private int count = 0;
-                @Override
-                public Thread newThread(Runnable r) {
-                    Thread thread = new Thread(r);
-                    thread.setName("Coupon-Task-Thread-" + count++);
-                    thread.setDaemon(true);
-                    return thread;
-                }
-            },
-            new ThreadPoolExecutor.CallerRunsPolicy()
+                CORE_POOL_SIZE,
+                MAXIMUM_POOL_SIZE,
+                KEEP_ALIVE_TIME,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(QUEUE_CAPACITY),
+                new ThreadFactory() {
+                    private int count = 0;
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        Thread thread = new Thread(r);
+                        thread.setName("Coupon-Task-Thread-" + count++);
+                        thread.setDaemon(true);
+                        return thread;
+                    }
+                },
+                new ThreadPoolExecutor.CallerRunsPolicy()
         );
-        
+
         // 预热核心线程
         executor.prestartAllCoreThreads();
-        
+
         // 添加线程池监控
         monitorThreadPool(executor);
-        
+
         return executor;
     }
-    
+
     private void monitorThreadPool(ThreadPoolExecutor executor) {
         ScheduledExecutorService monitor = Executors.newScheduledThreadPool(1);
         monitor.scheduleAtFixedRate(() -> {
@@ -86,7 +92,7 @@ public class ThreadPoolConfig {
             log.info("=========================");
         }, 0, 5, TimeUnit.SECONDS);
     }
-    
+
     private String divide(int num1, int num2) {
         return String.format("%.2f%%", (double) num1 / (double) num2 * 100);
     }

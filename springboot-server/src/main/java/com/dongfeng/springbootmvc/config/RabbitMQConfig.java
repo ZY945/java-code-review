@@ -1,16 +1,19 @@
 package com.dongfeng.springbootmvc.config;
 
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class RabbitMQConfig {
-    
+
     public static final String COUPON_QUEUE = "coupon.queue.v2";
     public static final String COUPON_DLX_QUEUE = "coupon.dlx.queue.v2";
     public static final String COUPON_DLX_EXCHANGE = "coupon.dlx.exchange.v2";

@@ -20,7 +20,7 @@ public class DataInitializer {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private CouponTemplateRepository templateRepository;
 

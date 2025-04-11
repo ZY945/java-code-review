@@ -3,10 +3,8 @@ package com.dongfeng.springbootmvc.common.idempotency;
 import com.dongfeng.springbootmvc.common.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,23 +24,23 @@ public class ApiIdempotentInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(!(handler instanceof HandlerMethod)) {
+        if (!(handler instanceof HandlerMethod)) {
             return true;
         }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
         ApiIdempotent apiIdempotent = method.getAnnotation(ApiIdempotent.class);
         if (apiIdempotent != null) {
-            check(request,apiIdempotent);
+            check(request, apiIdempotent);
         }
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 
-    private void check(HttpServletRequest request,ApiIdempotent apiIdempotent) {
+    private void check(HttpServletRequest request, ApiIdempotent apiIdempotent) {
         String token = request.getHeader("token");
         String userId = request.getHeader("X-User-Id");
         String serviceName = request.getHeader("X-Service-Name");
-        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(userId) || StringUtils.isEmpty(serviceName)){
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(userId) || StringUtils.isEmpty(serviceName)) {
             throw new BizException("非法参数");
         }
 
@@ -52,7 +50,7 @@ public class ApiIdempotentInterceptor implements HandlerInterceptor {
         String key = IDEMPOTENT_TOKEN_PREFIX + token;
         Boolean delResult = redisTemplate.delete(key);
         log.info("delResult: {}", delResult);
-        if (Boolean.FALSE.equals(delResult)){
+        if (Boolean.FALSE.equals(delResult)) {
             //删除失败
             throw new BizException(apiIdempotent.message());
         }

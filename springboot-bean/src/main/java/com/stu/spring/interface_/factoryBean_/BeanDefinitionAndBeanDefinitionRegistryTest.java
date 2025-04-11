@@ -4,7 +4,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 public class BeanDefinitionAndBeanDefinitionRegistryTest {
- 
+
     public static void main(String[] args) {
         DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
         beanFactory.registerBeanDefinition("proxyFactoryBean", new RootBeanDefinition(ProxyFactoryBean.class));

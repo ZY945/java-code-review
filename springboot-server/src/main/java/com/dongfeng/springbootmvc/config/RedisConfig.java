@@ -25,19 +25,19 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
-        
+
         // 使用 JSON 序列化，并使用自定义的 ObjectMapper
-        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = 
-            new GenericJackson2JsonRedisSerializer(objectMapper);
-        
+        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer =
+                new GenericJackson2JsonRedisSerializer(objectMapper);
+
         // key 使用 String 序列化
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
-        
+
         // value 使用 JSON 序列化
         template.setValueSerializer(jackson2JsonRedisSerializer);
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
-        
+
         template.afterPropertiesSet();
         return template;
     }

@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
-    
+
     @Query("SELECT COUNT(u) FROM UserCoupon u WHERE u.userId = :userId AND u.templateId = :templateId")
     long countByUserIdAndTemplateId(@Param("userId") Long userId, @Param("templateId") Long templateId);
-    
+
     List<UserCoupon> findByUserIdAndStatus(Long userId, Integer status);
 } 
