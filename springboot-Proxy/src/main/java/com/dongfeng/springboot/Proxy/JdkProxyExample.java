@@ -37,6 +37,8 @@ class MyInvocationHandler implements InvocationHandler {
 // 测试代码
 public class JdkProxyExample {
     public static void main(String[] args) {
+        // 保存代理对象文件
+        System.setProperty("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
         HelloImpl helloImpl = new HelloImpl();
         MyInvocationHandler handler = new MyInvocationHandler(helloImpl);
 

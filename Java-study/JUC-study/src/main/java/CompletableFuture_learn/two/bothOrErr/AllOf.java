@@ -1,6 +1,7 @@
 package CompletableFuture_learn.two.bothOrErr;
 
-import org.example.Task;
+
+import CompletableFuture_learn.Task;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
