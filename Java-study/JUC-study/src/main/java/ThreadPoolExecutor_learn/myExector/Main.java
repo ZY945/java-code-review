@@ -1,7 +1,5 @@
 package ThreadPoolExecutor_learn.myExector;
 
-import ThreadPoolExecutor_learn.myExector.MyThreadPoolExecutor;
-
 /**
  * @author dongfeng
  * @date 2023/8/6 17:01
@@ -13,16 +11,16 @@ public class Main {
         threadPool.submit(() -> {
             // 任务逻辑
             // Thread-0
-            System.out.println(Thread.currentThread().getName()+"执行中...");
-            while (true){
+            System.out.println(Thread.currentThread().getName() + "执行中...");
+            while (true) {
             }
         });
 
         threadPool.submit(() -> {
             // 任务逻辑
             // Thread-1
-            System.out.println(Thread.currentThread().getName()+"执行中...");
-            while (true){
+            System.out.println(Thread.currentThread().getName() + "执行中...");
+            while (true) {
             }
         });
 

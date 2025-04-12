@@ -2,13 +2,17 @@ package ThreadPoolExecutor_learn.delay;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * @author sunzsh
  * @param <T> 延迟业务数据的类型
+ * @author sunzsh
  */
 public abstract class ContinuousDelayBaseService<T> {
 
@@ -38,12 +42,13 @@ public abstract class ContinuousDelayBaseService<T> {
 
     /**
      * 最后一次超时回调
+     *
      * @param value
      */
     protected abstract void done(T value);
 
     /**
-     * @param delayMs 延迟毫秒数
+     * @param delayMs                 延迟毫秒数
      * @param callback4InitOrIfExists 回调函数：初次调用时，参数为空；重复调用时，参数为上次调用的返回值
      */
     public synchronized void delay(Long delayMs, Function<T, T> callback4InitOrIfExists) {
@@ -64,7 +69,7 @@ public abstract class ContinuousDelayBaseService<T> {
     }
 
     /**
-     *获取延时队列数据
+     * 获取延时队列数据
      */
     private DelayBean getDelayBean() {
         Iterator<DelayBean> iterator = queue.iterator();
@@ -100,7 +105,7 @@ public abstract class ContinuousDelayBaseService<T> {
             this.id = id;
         }
 
-        public DelayBean(String id, long delay, Object data){
+        public DelayBean(String id, long delay, Object data) {
             this.id = id;
             this.delay = delay;
             setDelay(delay);    //到期时间 = 当前时间+延迟时间
@@ -110,6 +115,7 @@ public abstract class ContinuousDelayBaseService<T> {
 
         /**
          * 需要实现的接口，获得延迟时间   用过期时间-当前时间
+         *
          * @param unit
          * @return
          */
@@ -120,6 +126,7 @@ public abstract class ContinuousDelayBaseService<T> {
 
         /**
          * 用于延迟队列内部比较排序   当前时间的延迟时间 - 比较对象的延迟时间
+         *
          * @param o
          * @return
          */
@@ -135,12 +142,12 @@ public abstract class ContinuousDelayBaseService<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj  == null)
+            if (obj == null)
                 return false;
             if (!(obj instanceof DelayBean)) {
                 return false;
             }
-            return Objects.equals(this.id, ((DelayBean)obj).id);
+            return Objects.equals(this.id, ((DelayBean) obj).id);
         }
     }
 }

@@ -9,11 +9,11 @@ import java.lang.ref.SoftReference;
  */
 public class _01_SoftReference_Queue {
     public static void main(String[] args) {
-        ReferenceQueue<byte[]> queue=new ReferenceQueue<>();
+        ReferenceQueue<byte[]> queue = new ReferenceQueue<>();
         // 强引用
         byte[] strongRef = new byte[1024 * 1024 * 15]; // 15MB
         // 软引用
-        SoftReference<byte[]> softReference = new SoftReference<>(strongRef,queue);
+        SoftReference<byte[]> softReference = new SoftReference<>(strongRef, queue);
         // 获取软引用的对象
         System.out.println("Before Clear StrongReference:" + softReference.get());
         System.out.println("queue " + queue.poll());

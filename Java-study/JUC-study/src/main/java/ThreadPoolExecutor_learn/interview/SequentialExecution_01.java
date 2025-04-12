@@ -1,6 +1,10 @@
 package ThreadPoolExecutor_learn.interview;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 /**
  * @author dongfeng
@@ -13,6 +17,7 @@ public class SequentialExecution_01 {
 
     /**
      * 通过CompletableFuture的thenRun实现顺序执行
+     *
      * @throws ExecutionException
      * @throws InterruptedException
      */
@@ -24,7 +29,8 @@ public class SequentialExecution_01 {
     }
 
     /**
-     *  通过线程的join方法实现顺序执行
+     * 通过线程的join方法实现顺序执行
+     *
      * @throws ExecutionException
      * @throws InterruptedException
      */
@@ -55,7 +61,8 @@ public class SequentialExecution_01 {
     }
 
     /**
-     *  通过Semaphore实现顺序执行
+     * 通过Semaphore实现顺序执行
+     *
      * @throws InterruptedException
      */
     private static void testBySemaphore() throws InterruptedException {
@@ -92,21 +99,24 @@ public class SequentialExecution_01 {
         thread3.start();
     }
 }
-class Thread1 implements Runnable{
+
+class Thread1 implements Runnable {
 
     @Override
     public void run() {
         System.out.println("线程1");
     }
 }
-class Thread2 implements Runnable{
+
+class Thread2 implements Runnable {
 
     @Override
     public void run() {
         System.out.println("线程2");
     }
 }
-class Thread3 implements Runnable{
+
+class Thread3 implements Runnable {
 
     @Override
     public void run() {

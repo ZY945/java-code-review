@@ -1,7 +1,5 @@
 package DesignPattern.Factory.factoryPattern;
 
-import java.util.Scanner;
-
 /**
  * @author dongfeng
  * @description 工厂模式--简单工厂的变形

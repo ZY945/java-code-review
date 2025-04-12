@@ -9,7 +9,7 @@ public class JMMProblem {
         Student student = new Student();
         student.start();
         while (true) {
-            synchronized (student){
+            synchronized (student) {
                 if (student.isLeave()) {
                     System.out.println("检测到学生离开,自动锁门");
                     break;

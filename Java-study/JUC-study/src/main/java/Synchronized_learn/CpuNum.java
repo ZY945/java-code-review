@@ -1,6 +1,5 @@
 package Synchronized_learn;
 
-import com.sun.jmx.remote.internal.ArrayQueue;
 
 /**
  * @author dongfeng

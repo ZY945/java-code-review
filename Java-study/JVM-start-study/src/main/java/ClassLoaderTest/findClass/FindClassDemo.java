@@ -1,6 +1,5 @@
 package ClassLoaderTest.findClass;
 
-import ClassLoaderTest.loadClass.Order;
 import HeapAndStack.HeadOverflow;
 
 import java.io.ByteArrayOutputStream;

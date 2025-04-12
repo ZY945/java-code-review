@@ -109,19 +109,19 @@ public class Demo {
         CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> {
                     list.add(sql_task(1000));
-                },executorService),
+                }, executorService),
                 CompletableFuture.runAsync(() -> {
                     list.add(sql_task(2000));
-                },executorService),
+                }, executorService),
                 CompletableFuture.runAsync(() -> {
                     list.add(sql_task(3000));
-                },executorService),
+                }, executorService),
                 CompletableFuture.runAsync(() -> {
                     list.add(sql_task(4000));
-                },executorService)).join();
+                }, executorService)).join();
         long end = System.currentTimeMillis();
         System.out.println(list);
-        System.out.println("花费时间"+(end - start));
+        System.out.println("花费时间" + (end - start));
         executorService.shutdown();
         try {
             executorService.awaitTermination(10, TimeUnit.SECONDS);

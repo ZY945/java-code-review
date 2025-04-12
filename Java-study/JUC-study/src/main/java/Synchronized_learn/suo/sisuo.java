@@ -11,35 +11,36 @@ package Synchronized_learn.suo;
 public class sisuo {
     private static Object r1 = new Object();
     private static Object r2 = new Object();
+
     public static void main(String[] args) {
         new Thread(() -> {
-            synchronized (r1){
+            synchronized (r1) {
                 System.out.println(Thread.currentThread() + "get r1");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println(Thread.currentThread()+"wait r2");
-                synchronized (r2){
-                    System.out.println(Thread.currentThread()+"get r2");
+                System.out.println(Thread.currentThread() + "wait r2");
+                synchronized (r2) {
+                    System.out.println(Thread.currentThread() + "get r2");
                 }
             }
-        },"线程1").start();
+        }, "线程1").start();
         new Thread(() -> {
-            synchronized (r2){
-                System.out.println(Thread.currentThread()+"get r2");
+            synchronized (r2) {
+                System.out.println(Thread.currentThread() + "get r2");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println(Thread.currentThread()+"wait r1");
-                synchronized (r1){
-                    System.out.println(Thread.currentThread()+"get r1");
+                System.out.println(Thread.currentThread() + "wait r1");
+                synchronized (r1) {
+                    System.out.println(Thread.currentThread() + "get r1");
                 }
             }
-        },"线程2")
+        }, "线程2")
                 .start();
 
 
@@ -48,19 +49,19 @@ public class sisuo {
          * 预防死锁
          */
         new Thread(() -> {
-            synchronized (r1){
-                System.out.println(Thread.currentThread()+"get r1");
+            synchronized (r1) {
+                System.out.println(Thread.currentThread() + "get r1");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 System.out.println(Thread.currentThread() + "wait r2");
-                synchronized (r2){
-                    System.out.println(Thread.currentThread()+"get r2");
+                synchronized (r2) {
+                    System.out.println(Thread.currentThread() + "get r2");
                 }
             }
-        },"线程2");
+        }, "线程2");
 //                .start();
     }
 }

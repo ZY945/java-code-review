@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Semaphore--许可，常用acquire获取，release释放
+ *
  * @author dongfeng
  * @date 2022/12/3 14:23
  */
@@ -15,7 +16,7 @@ public class _03_Semaphore {
         Semaphore semaphore = new Semaphore(3);
 
         //模拟6辆汽车
-        for (int i = 1; i <=6; i++) {
+        for (int i = 1; i <= 6; i++) {
             new Thread(() -> {
                 try {
                     //抢占

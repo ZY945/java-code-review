@@ -1,9 +1,7 @@
 package CompletableFuture_learn;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -14,6 +12,7 @@ import java.util.stream.Stream;
 /**
  * Consumer---入参,无返回
  * 类比stream流进行学习
+ *
  * @author dongfeng
  * @date 2023/8/4 10:11
  */
@@ -28,6 +27,7 @@ public class Task {
      * stream流的forEach方法
      * void forEach(Consumer<? super T> action);
      * {@link Collection#forEach },
+     *
      * @param taskName
      * @return
      */

@@ -1,11 +1,15 @@
 ## jconsole--图像化界面
+
 ```shell
 jconsole
 ```
+
 ## jps--查看java进程的pid
+
 ```shell
 jps
 ```
+
 ```text
 2212
 24084 Test
@@ -14,11 +18,15 @@ jps
 24296
 20508 Launcher
 ```
+
 ## jstat--查看gc内存占用情况
+
 jstat -gcutil pid 间隔时间
+
 ```shell
 jstat -gcutil 24084 1000
 ```
+
 ```text
  S0     S1     E      O      M     CCS    YGC     YGCT     FGC    FGCT     CGC    CGCT       GCT
   0.00   0.00  60.00   0.00      -      -      0     0.000     0     0.000     0     0.000     0.000
@@ -36,11 +44,15 @@ jstat -gcutil 24084 1000
   0.00   0.00  60.00   0.00      -      -      0     0.000     0     0.000     0     0.000     0.000
   0.00   0.00  60.00   0.00      -      -      0     0.000     0     0.000     0     0.000     0.000
 ```
+
 ## jstack
+
 ## jmap
+
 ```shell
 jhsdb jmap --heap --pid 24084
 ```
+
 ```text
 Attaching to process ID 24084, please wait...
 Debugger attached successfully.

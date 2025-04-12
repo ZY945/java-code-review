@@ -11,8 +11,8 @@ import java.util.List;
 public class HeadOverflow {
     public static void main(String[] args) {
         List<Object> listObj = new ArrayList<Object>();
-        for(int i=0; i<10; i++){
-            Byte[] bytes = new Byte[1*1024*1024];
+        for (int i = 0; i < 10; i++) {
+            Byte[] bytes = new Byte[1 * 1024 * 1024];
             listObj.add(bytes);
         }
         System.out.println("添加success");

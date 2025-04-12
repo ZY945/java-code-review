@@ -30,12 +30,12 @@ public class Test {
 
     public static void main(String[] args) {
         //测试验证1+2
-        BigDecimal result=compute(Operator.DIVIDE,BigDecimal.valueOf(1),BigDecimal.valueOf(2));//输出结果3
+        BigDecimal result = compute(Operator.DIVIDE, BigDecimal.valueOf(1), BigDecimal.valueOf(2));//输出结果3
         System.out.println(result);
     }
 
     public static BigDecimal compute(Operator operator, BigDecimal num1, BigDecimal num2) {
-        BigDecimal result = computers.get(operator).sum(num1,num2);
+        BigDecimal result = computers.get(operator).sum(num1, num2);
         return result;
     }
 
@@ -44,6 +44,6 @@ public class Test {
     }
 
     interface IComputer {
-        BigDecimal sum(BigDecimal num1,BigDecimal num2);
+        BigDecimal sum(BigDecimal num1, BigDecimal num2);
     }
 }

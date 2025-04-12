@@ -13,7 +13,7 @@ public class _1MainThread {
         ThreadMXBean bean = ManagementFactory.getThreadMXBean();
         long[] ids = bean.getAllThreadIds();
         ThreadInfo[] infos = bean.getThreadInfo(ids);
-        for(ThreadInfo info: infos){
+        for (ThreadInfo info : infos) {
 
             System.out.println(info.getThreadName());
         }

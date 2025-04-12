@@ -9,11 +9,11 @@ import java.lang.reflect.Proxy;
  * 2024-03-04 16:42
  */
 
-interface Service{
+interface Service {
     void sayHello();
 }
 
-class ServiceImpl implements Service{
+class ServiceImpl implements Service {
 
     @Override
     public void sayHello() {
@@ -22,12 +22,14 @@ class ServiceImpl implements Service{
 }
 
 
-class JDKProxy implements InvocationHandler{
+class JDKProxy implements InvocationHandler {
 
     private Object target;
-    public JDKProxy(Object target){
-        this.target=target;
+
+    public JDKProxy(Object target) {
+        this.target = target;
     }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         System.out.println("代理前");
@@ -36,11 +38,12 @@ class JDKProxy implements InvocationHandler{
         return result;
     }
 }
+
 public class JDKProxyMain {
     public static void main(String[] args) {
         ServiceImpl service = new ServiceImpl();
         JDKProxy jdkProxy = new JDKProxy(service);
-        Service afterProxy = (Service)Proxy.newProxyInstance(
+        Service afterProxy = (Service) Proxy.newProxyInstance(
                 service.getClass().getClassLoader(),
                 service.getClass().getInterfaces(),
                 jdkProxy

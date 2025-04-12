@@ -10,9 +10,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Main {
     public static volatile int i = 0;
     public static ReentrantLock lock = new ReentrantLock();
-    public static  Condition condition1 = lock.newCondition();
-    public static  Condition condition2 = lock.newCondition();
-    public static  Condition condition3 = lock.newCondition();
+    public static Condition condition1 = lock.newCondition();
+    public static Condition condition2 = lock.newCondition();
+    public static Condition condition3 = lock.newCondition();
+
     public static void main(String[] args) throws IOException {
 
 
@@ -21,11 +22,11 @@ public class Main {
 
                 try {
                     lock.lock();
-                    if(i%3==0){
-                        System.out.println(Thread.currentThread().getName()+"i的值:"+i);
+                    if (i % 3 == 0) {
+                        System.out.println(Thread.currentThread().getName() + "i的值:" + i);
                         i++;
                         condition2.signal();
-                    }else{
+                    } else {
                         condition1.await();
                     }
                 } catch (InterruptedException e) {
@@ -42,11 +43,11 @@ public class Main {
                 try {
                     try {
                         lock.lock();
-                        if(i%3==1){
-                            System.out.println(Thread.currentThread().getName()+"i的值:"+i);
+                        if (i % 3 == 1) {
+                            System.out.println(Thread.currentThread().getName() + "i的值:" + i);
                             i++;
                             condition3.signal();
-                        }else{
+                        } else {
                             condition2.await();
                         }
                     } catch (InterruptedException e) {
@@ -63,11 +64,11 @@ public class Main {
 
                 try {
                     lock.lock();
-                    if(i%3==2){
-                        System.out.println(Thread.currentThread().getName()+"i的值:"+i);
+                    if (i % 3 == 2) {
+                        System.out.println(Thread.currentThread().getName() + "i的值:" + i);
                         i++;
                         condition1.signal();
-                    }else{
+                    } else {
                         condition3.await();
                     }
                 } catch (InterruptedException e) {

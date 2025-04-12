@@ -1,7 +1,8 @@
 package ThreadPoolExecutor_learn.ThreadPoolExecutor_learn;
 
-import java.util.Date;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * <pre>{@code
@@ -10,6 +11,7 @@ import java.util.concurrent.*;
  *     }
  *     }
  * </pre>
+ *
  * @author dongfeng
  * @date 2022/11/6 23:13
  */
@@ -18,11 +20,11 @@ public class LearnThreadPool {
         CachedThreadPool();
     }
 
-    public static void FixedThreadPool(){
+    public static void FixedThreadPool() {
         ExecutorService executorService = Executors.newFixedThreadPool(5);
         ThreadPoolExecutor executorService1 = (ThreadPoolExecutor) executorService;
-        System.out.println("CorePoolSize:"+executorService1.getCorePoolSize());
-        System.out.println("PoolSize:"+executorService1.getPoolSize());
+        System.out.println("CorePoolSize:" + executorService1.getCorePoolSize());
+        System.out.println("PoolSize:" + executorService1.getPoolSize());
         executorService.shutdown();
     }
 
@@ -33,23 +35,23 @@ public class LearnThreadPool {
     public static void CachedThreadPool() throws InterruptedException {
         ExecutorService executorService = Executors.newCachedThreadPool();
         ThreadPoolExecutor executorService1 = (ThreadPoolExecutor) executorService;
-        System.out.println("CorePoolSize:"+executorService1.getCorePoolSize());
-        System.out.println("PoolSize:"+executorService1.getPoolSize());
+        System.out.println("CorePoolSize:" + executorService1.getCorePoolSize());
+        System.out.println("PoolSize:" + executorService1.getPoolSize());
         for (int i = 0; i < 5; i++) {
 
-            executorService.execute(()->{
+            executorService.execute(() -> {
                 try {
                     Thread.sleep(2000L);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             });
-            System.out.println("CorePoolSize:"+executorService1.getCorePoolSize());
-            System.out.println("PoolSize:"+executorService1.getPoolSize());
+            System.out.println("CorePoolSize:" + executorService1.getCorePoolSize());
+            System.out.println("PoolSize:" + executorService1.getPoolSize());
         }
         Thread.sleep(5000L);
-        System.out.println("CorePoolSize:"+executorService1.getCorePoolSize());
-        System.out.println("PoolSize:"+executorService1.getPoolSize());
+        System.out.println("CorePoolSize:" + executorService1.getCorePoolSize());
+        System.out.println("PoolSize:" + executorService1.getPoolSize());
         executorService.shutdown();
     }
 }

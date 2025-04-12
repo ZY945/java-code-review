@@ -24,10 +24,10 @@ class lockShare {
             }
             //干活
             number++;
-            System.out.println(Thread.currentThread().getName()+" :: "+number);
+            System.out.println(Thread.currentThread().getName() + " :: " + number);
             //通知
             decondition.signalAll();
-        }finally {
+        } finally {
             //解锁
             lock.unlock();
         }
@@ -37,13 +37,13 @@ class lockShare {
     public void decr() throws InterruptedException {
         lock.lock();
         try {
-            while(number != 1) {
+            while (number != 1) {
                 decondition.await();
             }
             number--;
-            System.out.println(Thread.currentThread().getName()+" :: "+number);
+            System.out.println(Thread.currentThread().getName() + " :: " + number);
             incondition.signalAll();
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -54,48 +54,48 @@ public class ThreadLockCondition1 {
     public static void main(String[] args) {
         lockShare share = new lockShare();
         // 线程AA
-        new Thread(()->{
-            for (int i = 1; i <=10; i++) {
+        new Thread(() -> {
+            for (int i = 1; i <= 10; i++) {
                 try {
                     share.incr();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        },"AA").start();
-        
+        }, "AA").start();
+
         // 线程BB
-        new Thread(()->{
-            for (int i = 1; i <=10; i++) {
+        new Thread(() -> {
+            for (int i = 1; i <= 10; i++) {
                 try {
                     share.decr();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        },"BB").start();
+        }, "BB").start();
 
         // 线程CC
-        new Thread(()->{
-            for (int i = 1; i <=10; i++) {
+        new Thread(() -> {
+            for (int i = 1; i <= 10; i++) {
                 try {
                     share.incr();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        },"CC").start();
-        
+        }, "CC").start();
+
         // 线程DD
-        new Thread(()->{
-            for (int i = 1; i <=10; i++) {
+        new Thread(() -> {
+            for (int i = 1; i <= 10; i++) {
                 try {
                     share.decr();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        },"DD").start();
+        }, "DD").start();
     }
 
 }

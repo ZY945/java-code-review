@@ -12,6 +12,7 @@ import sun.misc.Unsafe;
  * loadFence=LoadLoad+LoadStore
  * storeFence=StoreStore+LoadStore
  * fullFence=loadFence+storeFence+StoreLoad
+ *
  * @author dongfeng
  * @date 2023/8/20 13:41
  */

@@ -1,12 +1,12 @@
 package reference;
 
-import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
 /**
  * 弱引用,gc时,会进行回收对象(注意,)
  * 可以结合队列使用，当被回收后，就进去于之关联的队列中。
  * -Xmx25m -Xms25m -XX:-UseCompressedOops
+ *
  * @author dongfeng
  * 2024-02-23 15:03
  */
@@ -19,7 +19,6 @@ public class _02_WeakReference {
         WeakReference<byte[]> weakReference = new WeakReference<>(strongRef);
         // 获取弱引用的对象
         System.out.println("Before Clear StrongReference:" + weakReference.get());
-
 
 
         // 2.清理强引用,这时只留下弱引用

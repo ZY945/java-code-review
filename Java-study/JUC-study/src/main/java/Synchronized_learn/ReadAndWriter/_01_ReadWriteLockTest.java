@@ -1,6 +1,5 @@
 package Synchronized_learn.ReadAndWriter;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class _01_ReadWriteLockTest {
@@ -9,7 +8,6 @@ public class _01_ReadWriteLockTest {
 //        ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 //        lock.writeLock().lock();
 //        new Thread(lock.writeLock()::lock).start();
-
 
 
         //可重入锁
@@ -25,8 +23,6 @@ public class _01_ReadWriteLockTest {
 //        TimeUnit.SECONDS.sleep(1);
 //        System.out.println("释放第二层锁！");
 //        lock.writeLock().unlock();
-
-
 
 
         //公平锁

@@ -24,7 +24,7 @@ public class _01_supplyAsync {
             return "盲僧R闪了";
         });
         SmallTool.printTimeAndThread("小兵在打盲僧");
-        SmallTool.printTimeAndThread(String.format("%s,ADC被踢回来了",cf.join()));
+        SmallTool.printTimeAndThread(String.format("%s,ADC被踢回来了", cf.join()));
 
     }
 }

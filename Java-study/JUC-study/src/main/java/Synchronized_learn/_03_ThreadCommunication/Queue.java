@@ -1,6 +1,5 @@
 package Synchronized_learn._03_ThreadCommunication;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,20 +15,20 @@ public class Queue<T> {
     private Condition notFull = lock.newCondition();
     private int length = 0, addIndex = 0, removeIndex = 0;
 
-    public Queue(int size){
+    public Queue(int size) {
         elements = new Object[size];
     }
 
-    public void add(T object){
+    public void add(T object) {
         lock.lock();
         try {
-            while (length== elements.length){
+            while (length == elements.length) {
                 System.out.println("队列已满，已诸塞，等待删除");
                 notFull.await();
             }
-            elements[addIndex]=object;
-            if(addIndex++ == elements.length){
-                addIndex=0;
+            elements[addIndex] = object;
+            if (addIndex++ == elements.length) {
+                addIndex = 0;
             }
             length++;
             notEmpty.signal();
@@ -39,15 +38,16 @@ public class Queue<T> {
             lock.unlock();
         }
     }
-    public T remove(){
+
+    public T remove() {
         lock.lock();
         try {
-            while (0==length){
+            while (0 == length) {
                 System.out.println("队列无法删除，已诸塞，等待添加");
                 notEmpty.await();
             }
             Object element = elements[removeIndex];
-            if(removeIndex++ == elements.length){
+            if (removeIndex++ == elements.length) {
                 removeIndex = 0;
             }
             length--;
@@ -61,13 +61,14 @@ public class Queue<T> {
         }
     }
 }
-class test{
+
+class test {
     public static void main(String[] args) throws InterruptedException {
         Queue<Integer> queue = new Queue<>(2);
-        Thread thread1 = new Thread(() ->{
+        Thread thread1 = new Thread(() -> {
             queue.remove();
         });
-        Thread thread2 = new Thread(() ->{
+        Thread thread2 = new Thread(() -> {
             queue.add(1);
             System.out.println("添加成功");
         });

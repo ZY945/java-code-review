@@ -38,6 +38,6 @@ public class newThread {
         //设置守护线程
         ss.setDaemon(true);
         ss.start();
-        System.out.println(Thread.currentThread().getName()+"over");
+        System.out.println(Thread.currentThread().getName() + "over");
     }
 }

@@ -4,7 +4,7 @@ package JMM_volatile.JMM;
  * @author dongfeng
  * @date 2023/7/29 16:53
  */
-public class Student extends Thread{
+public class Student extends Thread {
     private volatile boolean leave = false;
 
     public boolean isLeave() {

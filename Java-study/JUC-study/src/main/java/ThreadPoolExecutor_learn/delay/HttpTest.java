@@ -1,6 +1,5 @@
 package ThreadPoolExecutor_learn.delay;
 
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -10,12 +9,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class HttpTest {
     static AtomicInteger atomicInteger = new AtomicInteger(11);
+
     public static void main(String[] args) throws InterruptedException {
-        while (true){
+        while (true) {
             DelaySave delaySave = new DelaySave();
             for (int i = 0; i < 10; i++) {
                 System.out.println("一次请求");
-                delaySave.delay(3000L,(record)-> atomicInteger.decrementAndGet());
+                delaySave.delay(3000L, (record) -> atomicInteger.decrementAndGet());
                 System.out.println("响应成功");
             }
             Thread.sleep(4000L);

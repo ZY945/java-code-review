@@ -1,13 +1,12 @@
 package reference;
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.sql.Ref;
 
 /**
  * 软引用,gc&&内存不足时,会进行回收对象
  * 设置较小的jvm堆和较大的对象,来模拟内存不足
  * -Xmx25m -Xms25m -XX:-UseCompressedOops -XX:+PrintGCDetails
+ *
  * @author dongfeng
  * 2024-02-23 12:29
  */
