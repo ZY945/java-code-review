@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.web.rpc</groupId>
+        <artifactId>springboot-RPC</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+
+    <groupId>com.web.rpc</groupId>
+    <artifactId>rpc-spring-boot-starter</artifactId>
+    <version>${revision}</version>
+
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- 客户端模块 -->
+        <dependency>
+            <groupId>com.web.rpc</groupId>
+            <artifactId>rpc-client</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 服务端模块 -->
+        <dependency>
+            <groupId>com.web.rpc</groupId>
+            <artifactId>rpc-server</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

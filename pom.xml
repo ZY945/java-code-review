@@ -19,6 +19,7 @@
         <module>springboot-Transactional</module>
         <module>springboot-FileHandler</module>
         <module>springboot-Proxy</module>
+        <module>springboot-RPC</module>
         <module>netty</module>
         <module>java-study</module>
     </modules>
@@ -45,6 +46,7 @@
                 <scope>import</scope>
             </dependency>
         </dependencies>
+
     </dependencyManagement>
 
     <build>
