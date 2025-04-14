@@ -14,16 +14,16 @@ public interface HelloService {
      * @return 问候语
      */
     String sayHello(String name);
-    
+
     /**
      * 带有延迟的问候，用于测试超时
      *
-     * @param name 名字
+     * @param name        名字
      * @param delayMillis 延迟毫秒数
      * @return 问候语
      */
     String helloWithDelay(String name, long delayMillis);
-    
+
     /**
      * 批量问候
      *
@@ -31,7 +31,7 @@ public interface HelloService {
      * @return 问候语列表
      */
     List<String> batchHello(List<String> names);
-    
+
     /**
      * 获取服务器信息
      *

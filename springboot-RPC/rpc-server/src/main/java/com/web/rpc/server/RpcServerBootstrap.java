@@ -1,9 +1,9 @@
 package com.web.rpc.server;
 
-import com.web.rpc.core.annotation.RpcService;
 import com.web.rpc.core.registry.EtcdServiceRegistry;
 import com.web.rpc.core.registry.ServiceRegistry;
 import com.web.rpc.server.netty.NettyServer;
+import com.web.rpc.server.service.RpcServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -13,9 +13,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.net.InetAddress;
-import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * RPC服务器引导类
+ * 负责初始化和启动RPC服务器
+ */
 public class RpcServerBootstrap implements InitializingBean, DisposableBean, ApplicationContextAware {
     private static final Logger logger = LoggerFactory.getLogger(RpcServerBootstrap.class);
 
@@ -25,7 +28,15 @@ public class RpcServerBootstrap implements InitializingBean, DisposableBean, App
     private ApplicationContext applicationContext;
     private NettyServer nettyServer;
     private ServiceRegistry serviceRegistry;
+    private RpcServiceManager serviceManager;
 
+    /**
+     * 创建RPC服务器引导类
+     *
+     * @param port          服务器端口
+     * @param etcdEndpoints ETCD服务地址
+     * @throws Exception 如果获取本机IP地址失败
+     */
     public RpcServerBootstrap(int port, String... etcdEndpoints) throws Exception {
         this.host = InetAddress.getLocalHost().getHostAddress();
         this.port = port;
@@ -39,30 +50,14 @@ public class RpcServerBootstrap implements InitializingBean, DisposableBean, App
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // 初始化服务注册中心
+        // 初始化服务注册中心，默认使用ETCD
         serviceRegistry = new EtcdServiceRegistry(etcdEndpoints);
 
+        // 创建服务管理器
+        serviceManager = new RpcServiceManager(serviceRegistry, host, port);
+
         // 扫描和注册服务
-        Map<String, Object> serviceMap = new HashMap<>();
-        String[] beanNames = applicationContext.getBeanNamesForAnnotation(RpcService.class);
-        
-        for (String beanName : beanNames) {
-            Object serviceBean = applicationContext.getBean(beanName);
-            RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
-            Class<?>[] interfaces = serviceBean.getClass().getInterfaces();
-            
-            if (interfaces.length == 0) {
-                throw new RuntimeException("RPC service must implement an interface: " + serviceBean.getClass());
-            }
-            
-            // 使用接口名和版本号作为服务名
-            String serviceName = interfaces[0].getName() + "#" + rpcService.version();
-            serviceMap.put(serviceName, serviceBean);
-            
-            // 注册服务到注册中心
-            serviceRegistry.register(serviceName, host, port);
-            logger.info("Registered service: {} at {}:{}", serviceName, host, port);
-        }
+        Map<String, Object> serviceMap = serviceManager.scanAndRegisterServices(applicationContext);
 
         // 启动Netty服务器
         nettyServer = new NettyServer(host, port, serviceMap, serviceRegistry);
@@ -75,9 +70,15 @@ public class RpcServerBootstrap implements InitializingBean, DisposableBean, App
         if (nettyServer != null) {
             nettyServer.stop();
         }
+
+        if (serviceManager != null) {
+            serviceManager.unregisterAllServices();
+        }
+
         if (serviceRegistry != null) {
             serviceRegistry.close();
         }
+
         logger.info("RPC Server stopped");
     }
 }

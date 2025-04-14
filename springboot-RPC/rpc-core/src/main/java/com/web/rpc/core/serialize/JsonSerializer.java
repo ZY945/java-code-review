@@ -4,18 +4,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.web.rpc.core.RpcRequest;
 import com.web.rpc.core.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 public class JsonSerializer implements Serializer {
     private static final Logger logger = LoggerFactory.getLogger(JsonSerializer.class);
@@ -25,27 +19,27 @@ public class JsonSerializer implements Serializer {
         // 创建一个全新的ObjectMapper实例，使用基本配置
         this.objectMapper = createObjectMapper();
     }
-    
+
     /**
      * 创建一个安全的ObjectMapper实例，避免使用高级特性
      */
     private ObjectMapper createObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        
+
         // 基本配置
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-        
+
         // 忽略null值
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        
+
         // 使用字段而不是方法访问，避免一些反射问题
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
-        
+
         return mapper;
     }
 
@@ -80,7 +74,7 @@ public class JsonSerializer implements Serializer {
             throw new RuntimeException("Failed to deserialize: " + e.getMessage());
         }
     }
-    
+
     /**
      * 处理RpcResponse中的result字段，尝试将LinkedHashMap转换为正确的类型
      */
@@ -106,7 +100,7 @@ public class JsonSerializer implements Serializer {
             }
         }
     }
-    
+
     /**
      * 尝试从LinkedHashMap中猜测目标类名
      */
@@ -117,7 +111,7 @@ public class JsonSerializer implements Serializer {
             if (map.containsKey("@class")) {
                 return (String) map.get("@class");
             }
-            
+
             // 尝试从字段组合推断类型
             if (map.containsKey("host") && map.containsKey("port") && map.containsKey("version") && map.containsKey("startTime")) {
                 return "com.web.rpc.example.api.ServerInfo";

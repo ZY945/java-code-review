@@ -186,18 +186,18 @@ public class ProtobufSerializer implements Serializer {
         RpcResponseProto proto = RpcResponseProto.parseFrom(bytes);
         RpcResponse response = new RpcResponse();
         response.setRequestId(proto.getRequestId());
-        
+
         // 设置状态码
         response.setStatus(RpcStatus.fromCode(proto.getStatusCode()));
-        
+
         // 设置时间戳
         response.setTimestamp(proto.getTimestamp());
-        
+
         // 设置错误信息
         if (!proto.getErrorMessage().isEmpty()) {
             response.setErrorMessage(proto.getErrorMessage());
         }
-        
+
         // 设置结果
         if (proto.getResult() != null && !proto.getResult().isEmpty()) {
             try {
@@ -208,7 +208,7 @@ public class ProtobufSerializer implements Serializer {
                 logger.warn("Failed to deserialize result: {}", e.getMessage());
             }
         }
-        
+
         // 设置错误详情
         if (proto.getErrorDetails() != null && !proto.getErrorDetails().isEmpty()) {
             try {
@@ -218,29 +218,29 @@ public class ProtobufSerializer implements Serializer {
                 logger.warn("Failed to deserialize error details: {}", e.getMessage());
             }
         }
-        
+
         return response;
     }
 
     private RpcMessage deserializeMessage(byte[] bytes) throws InvalidProtocolBufferException {
         RpcMessageProto proto = RpcMessageProto.parseFrom(bytes);
         RpcMessage message = new RpcMessage();
-        
+
         // 设置版本
-        message.setVersion((byte)proto.getVersion());
-        
+        message.setVersion((byte) proto.getVersion());
+
         // 设置消息类型
         message.setMessageType(MessageType.fromType(proto.getMessageType()));
-        
+
         // 设置序列化类型
-        message.setSerializationType((byte)proto.getSerializationType());
-        
+        message.setSerializationType((byte) proto.getSerializationType());
+
         // 设置压缩类型
-        message.setCompressionType((byte)proto.getCompressionType());
-        
+        message.setCompressionType((byte) proto.getCompressionType());
+
         // 设置请求ID
         message.setRequestId(proto.getRequestId());
-        
+
         // 设置数据
         if (proto.getData() != null && !proto.getData().isEmpty()) {
             try {
@@ -250,7 +250,7 @@ public class ProtobufSerializer implements Serializer {
                 logger.warn("Failed to deserialize message data: {}", e.getMessage());
             }
         }
-        
+
         return message;
     }
 
@@ -258,7 +258,7 @@ public class ProtobufSerializer implements Serializer {
         if (obj instanceof Message) {
             return ((Message) obj).toByteArray();
         }
-        
+
         // 处理其他类型的对象序列化
         try {
             if (obj == null) {
@@ -288,7 +288,7 @@ public class ProtobufSerializer implements Serializer {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-        
+
         try {
             // 首先尝试作为Protobuf消息解析
             try {
@@ -297,15 +297,15 @@ public class ProtobufSerializer implements Serializer {
             } catch (InvalidProtocolBufferException e) {
                 // 不是Any类型，继续尝试其他方式
             }
-            
+
             // 尝试作为字符串解析
             try {
                 String str = new String(bytes);
-                
+
                 // 尝试解析为基本类型
                 if (str.equals("true")) return Boolean.TRUE;
                 if (str.equals("false")) return Boolean.FALSE;
-                
+
                 try {
                     return Integer.parseInt(str);
                 } catch (NumberFormatException e1) {
@@ -337,7 +337,7 @@ public class ProtobufSerializer implements Serializer {
             throw new RuntimeException("Failed to load class: " + className, e);
         }
     }
-    
+
     /**
      * 从ByteString反序列化对象
      */
@@ -345,7 +345,7 @@ public class ProtobufSerializer implements Serializer {
         if (byteString == null || byteString.isEmpty()) {
             return null;
         }
-        
+
         try {
             // 首先尝试作为字节数组处理
             byte[] bytes = byteString.toByteArray();
@@ -355,7 +355,7 @@ public class ProtobufSerializer implements Serializer {
             return byteString.toByteArray();
         }
     }
-    
+
     /**
      * 将普通对象转换为MessageOrBuilder
      * 这是一个简化实现，实际应用中可能需要更复杂的转换逻辑
@@ -365,21 +365,21 @@ public class ProtobufSerializer implements Serializer {
         if (obj instanceof MessageOrBuilder) {
             return (MessageOrBuilder) obj;
         }
-        
+
         // 创建一个通用的DynamicMessage
         try {
             // 这里我们创建一个空的Any消息作为容器
             Any.Builder builder = Any.newBuilder();
-            
+
             // 设置类型URL
             String typeUrl = "type.googleapis.com/" + obj.getClass().getName();
             builder.setTypeUrl(typeUrl);
-            
+
             // 将对象转换为JSON字符串，然后设置为值
             // 注意：这里我们假设对象可以转换为字符串
             String json = obj.toString();
             builder.setValue(com.google.protobuf.ByteString.copyFromUtf8(json));
-            
+
             return builder;
         } catch (Exception e) {
             logger.error("Failed to convert object to MessageOrBuilder: {}", obj, e);

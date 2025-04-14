@@ -1,11 +1,11 @@
 package com.web.rpc.example.service.impl;
 
 import com.web.rpc.core.annotation.RpcService;
+import com.web.rpc.example.ServerApplication;
 import com.web.rpc.example.api.HelloService;
 import com.web.rpc.example.api.ServerInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -21,15 +21,12 @@ import java.util.Map;
 public class HelloServiceImpl implements HelloService {
     private static final Logger logger = LoggerFactory.getLogger(HelloServiceImpl.class);
     private final long startTime = System.currentTimeMillis();
-    
-    @Value("${rpc.server.port:8888}")
-    private int serverPort;
-    
-    @Value("${spring.application.name:rpc-example-server}")
-    private String applicationName;
-    
-    @Value("${rpc.version:1.0.0}")
-    private String version;
+
+    private static final int serverPort = ServerApplication.SERVER_PORT;
+
+    private static final String applicationName = ServerApplication.applicationName;
+
+    private static final String version = ServerApplication.version;
 
     @Override
     public String sayHello(String name) {
@@ -49,7 +46,7 @@ public class HelloServiceImpl implements HelloService {
             return "Error: " + e.getMessage();
         }
     }
-    
+
     @Override
     public List<String> batchHello(List<String> names) {
         logger.info("Received batch hello request for {} names", names.size());
@@ -59,11 +56,11 @@ public class HelloServiceImpl implements HelloService {
         }
         return results;
     }
-    
+
     @Override
     public ServerInfo getServerInfo() {
         logger.info("Received request for server info");
-        
+
         String host;
         try {
             host = InetAddress.getLocalHost().getHostAddress();
@@ -71,7 +68,7 @@ public class HelloServiceImpl implements HelloService {
             host = "unknown";
             logger.error("Failed to get host address", e);
         }
-        
+
         Map<String, String> properties = new HashMap<>();
         properties.put("application.name", applicationName);
         properties.put("java.version", System.getProperty("java.version"));
@@ -79,7 +76,7 @@ public class HelloServiceImpl implements HelloService {
         properties.put("os.version", System.getProperty("os.version"));
         properties.put("user.name", System.getProperty("user.name"));
         properties.put("available.processors", String.valueOf(Runtime.getRuntime().availableProcessors()));
-        
+
         return new ServerInfo(host, serverPort, version, startTime, properties);
     }
 }

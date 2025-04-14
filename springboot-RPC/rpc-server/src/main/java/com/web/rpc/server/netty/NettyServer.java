@@ -2,11 +2,13 @@ package com.web.rpc.server.netty;
 
 import com.web.rpc.core.codec.RpcDecoder;
 import com.web.rpc.core.codec.RpcEncoder;
-import com.web.rpc.core.constants.RpcConstants;
 import com.web.rpc.core.registry.ServiceRegistry;
 import com.web.rpc.server.netty.handler.RpcRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -63,11 +65,10 @@ public class NettyServer {
 
         bootstrap.bind(host, port).sync();
         logger.info("Netty server started on {}:{}", host, port);
-        
+
         // 注册所有服务到ETCD
         registerServices();
     }
-
 
 
     /**

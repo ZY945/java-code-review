@@ -6,7 +6,6 @@ import com.web.rpc.core.constants.RpcConstants;
 import com.web.rpc.core.protocol.MessageType;
 import com.web.rpc.core.protocol.RpcMessage;
 import com.web.rpc.core.protocol.RpcStatus;
-import java.util.concurrent.CompletableFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -44,7 +43,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
                 handleHeartbeat(ctx, message);
                 return;
             }
-            
+
             // 处理RPC请求
             if (message.getMessageType() == MessageType.REQUEST) {
                 handleRpcRequest(ctx, message);
@@ -55,15 +54,15 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
             RpcResponse errorResponse = new RpcResponse();
             errorResponse.setStatus(RpcStatus.INTERNAL_ERROR);
             errorResponse.setErrorMessage("Server error: " + e.getMessage());
-            
+
             RpcMessage responseMessage = RpcMessage.createResponse(message.getRequestId(), errorResponse);
             responseMessage.setCompressionType(message.getCompressionType());
             responseMessage.setSerializationType(message.getSerializationType());
-            
+
             ctx.writeAndFlush(responseMessage);
         }
     }
-    
+
     /**
      * 处理心跳请求
      */
@@ -75,19 +74,19 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
         heartbeatResponse.setSerializationType(message.getSerializationType());
         ctx.writeAndFlush(heartbeatResponse);
     }
-    
+
     /**
      * 处理RPC请求
      */
     private void handleRpcRequest(ChannelHandlerContext ctx, RpcMessage message) {
         RpcRequest request = (RpcRequest) message.getData();
-        
+
         // 如果设置了超时，使用带超时的CompletableFuture
         CompletableFuture<RpcResponse> future = CompletableFuture.supplyAsync(
                 () -> handleRequest(request),
                 executorService
         );
-        
+
         // 超时处理
         if (request.getTimeout() > 0) {
             // Java 9及以上版本才支持completeOnTimeout，这里使用自定义实现
@@ -100,21 +99,21 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
                         timeoutFuture.complete(createTimeoutResponse(request));
                     }
                 }
-            }, request.getTimeUnit() != null ? 
-                    request.getTimeUnit().toMillis(request.getTimeout()) : 
+            }, request.getTimeUnit() != null ?
+                    request.getTimeUnit().toMillis(request.getTimeout()) :
                     TimeUnit.MILLISECONDS.toMillis(request.getTimeout()));
         }
-        
+
         future.thenAccept(response -> {
             // 构造响应消息
             RpcMessage responseMessage = RpcMessage.createResponse(message.getRequestId(), response);
             responseMessage.setCompressionType(message.getCompressionType());
             responseMessage.setSerializationType(message.getSerializationType());
-            
+
             ctx.writeAndFlush(responseMessage);
         });
     }
-    
+
     /**
      * 创建超时响应
      */
@@ -138,11 +137,11 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
             // 构建服务名称，格式为：接口名#版本号
             String serviceName = request.getServiceName() + "#" + request.getVersion();
             logger.info("Handling request: {} for service: {}", request.getRequestId(), serviceName);
-            
+
             // 获取服务实例
             Object service = serviceMap.get(serviceName);
             if (service == null) {
-                String error = String.format("Service not found: %s (version: %s)", 
+                String error = String.format("Service not found: %s (version: %s)",
                         request.getServiceName(), request.getVersion());
                 logger.error(error);
                 logger.error("Available services: {}", serviceMap.keySet());
@@ -153,11 +152,11 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
 
             // 获取并调用方法
             Method method = service.getClass().getMethod(
-                    request.getMethodName(), 
+                    request.getMethodName(),
                     request.getParameterTypes()
             );
             logger.debug("Invoking method: {} on service: {}", method.getName(), serviceName);
-            
+
             // 调用服务方法
             Object result = method.invoke(service, request.getParameters());
             response.setStatus(RpcStatus.SUCCESS);
@@ -172,7 +171,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
             logger.error("Failed to handle request: {}", request, e);
             response.setStatus(RpcStatus.INTERNAL_ERROR);
             response.setErrorMessage(e.getMessage());
-            
+
             // 在开发环境下返回详细异常信息
             if (System.getProperty("rpc.env", "prod").equals("dev")) {
                 response.setError(e);
@@ -205,7 +204,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcMessage> {
     public void channelInactive(ChannelHandlerContext ctx) {
         logger.info("Client disconnected: {}", ctx.channel().remoteAddress());
     }
-    
+
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         super.channelUnregistered(ctx);

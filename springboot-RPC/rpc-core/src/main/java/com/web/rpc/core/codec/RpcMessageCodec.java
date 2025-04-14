@@ -21,12 +21,12 @@ public class RpcMessageCodec {
      * 魔数，用于快速识别RPC消息
      */
     public static final short MAGIC_NUMBER = 0x10;
-    
+
     /**
      * 版本号
      */
     public static final byte VERSION = 1;
-    
+
     /**
      * 头部长度: 魔数(2) + 版本(1) + 消息类型(1) + 序列化类型(1) + 压缩类型(1) + 请求ID(8) + 消息体长度(4)
      */

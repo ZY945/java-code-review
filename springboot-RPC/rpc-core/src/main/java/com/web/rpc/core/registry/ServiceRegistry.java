@@ -5,8 +5,8 @@ public interface ServiceRegistry {
      * 注册服务
      *
      * @param serviceName 服务名称
-     * @param host 主机地址
-     * @param port 端口
+     * @param host        主机地址
+     * @param port        端口
      */
     void register(String serviceName, String host, int port);
 
@@ -14,8 +14,8 @@ public interface ServiceRegistry {
      * 注销服务
      *
      * @param serviceName 服务名称
-     * @param host 主机地址
-     * @param port 端口
+     * @param host        主机地址
+     * @param port        端口
      */
     void unregister(String serviceName, String host, int port);
 

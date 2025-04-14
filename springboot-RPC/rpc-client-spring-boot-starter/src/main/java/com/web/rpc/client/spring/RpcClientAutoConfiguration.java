@@ -2,8 +2,6 @@ package com.web.rpc.client.spring;
 
 import com.web.rpc.client.core.RpcClientCore;
 import com.web.rpc.client.processor.RpcClientBeanPostProcessor;
-import com.web.rpc.core.registry.EtcdServiceRegistry;
-import com.web.rpc.core.registry.ServiceRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +23,11 @@ public class RpcClientAutoConfiguration {
     @ConditionalOnMissingBean
     public RpcClientCore rpcClientCore(String[] etcdEndpoints, RpcClientProperties properties) {
         return new RpcClientCore(
-            properties.getHost(),
-            properties.getPort(),
-            etcdEndpoints,
-            properties.getServiceInterface(),
-            properties.getVersion()
+                properties.getHost(),
+                properties.getPort(),
+                etcdEndpoints,
+                properties.getServiceInterface(),
+                properties.getVersion()
         );
     }
 

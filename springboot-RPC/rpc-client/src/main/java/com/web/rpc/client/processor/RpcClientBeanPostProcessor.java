@@ -30,7 +30,7 @@ public class RpcClientBeanPostProcessor implements BeanPostProcessor {
             if (field.isAnnotationPresent(RpcReference.class)) {
                 RpcReference reference = field.getAnnotation(RpcReference.class);
                 Class<?> interfaceClass = field.getType();
-                
+
                 try {
                     field.setAccessible(true);
                     // 发现服务

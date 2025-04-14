@@ -34,7 +34,7 @@ public class CompressorFactory {
      * 注册压缩器
      *
      * @param compressType 压缩类型
-     * @param compressor 压缩器实例
+     * @param compressor   压缩器实例
      */
     public static void registerCompressor(byte compressType, Compressor compressor) {
         COMPRESSOR_MAP.put(compressType, compressor);

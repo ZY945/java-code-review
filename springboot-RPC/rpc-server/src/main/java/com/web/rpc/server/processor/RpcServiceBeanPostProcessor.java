@@ -1,49 +1,40 @@
-package com.web.rpc.server.processor;
-
-import com.web.rpc.core.annotation.RpcService;
-import com.web.rpc.core.registry.ServiceRegistry;
-import com.web.rpc.core.utils.RpcUtils;
-import com.web.rpc.server.registry.ServerRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-
-import java.util.Map;
-
-public class RpcServiceBeanPostProcessor implements BeanPostProcessor{
-    private static final Logger logger = LoggerFactory.getLogger(RpcServiceBeanPostProcessor.class);
-    private ServerRegistry serverRegistry;
-    private String serverHost;
-    private int serverPort;
-
-    public RpcServiceBeanPostProcessor(ServerRegistry serviceDiscovery) {
-        this.serverRegistry = serviceDiscovery;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (bean.getClass().isAnnotationPresent(RpcService.class)) {
-            RpcService rpcService = bean.getClass().getAnnotation(RpcService.class);
-            Class<?>[] interfaces = bean.getClass().getInterfaces();
-            if (interfaces.length == 0) {
-                logger.warn("Bean {} annotated with @RpcService but implements no interfaces", beanName);
-                return bean;
-            }
-
-            String serviceName = RpcUtils.getServiceName(interfaces[0], rpcService.version());
-
-            // 注册到 etcd
-            if (serverRegistry != null) {
-                serverRegistry.register(serviceName, serverHost, serverPort);
-                logger.info("Registered service to etcd: {} at {}:{}", serviceName, serverHost, serverPort);
-            } else {
-                logger.warn("ServiceRegistry is not configured, skipping etcd registration");
-            }
-        }
-        return bean;
-    }
-
-}
+//package com.web.rpc.server.processor;
+//
+//import com.web.rpc.server.service.RpcServiceManager;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.beans.BeansException;
+//import org.springframework.beans.factory.config.BeanPostProcessor;
+//
+///**
+// * RPC服务Bean后处理器
+// * 负责在Bean初始化后处理@RpcService注解
+// *
+// * @deprecated 请使用RpcServerBootstrap和RpcServiceManager替代，它们提供了更集中的服务管理方式
+// */
+//@Deprecated
+//public class RpcServiceBeanPostProcessor implements BeanPostProcessor {
+//    private static final Logger logger = LoggerFactory.getLogger(RpcServiceBeanPostProcessor.class);
+//    private final RpcServiceManager serviceManager;
+//
+//    /**
+//     * 创建RPC服务Bean后处理器
+//     *
+//     * @param serviceManager RPC服务管理器
+//     */
+//    public RpcServiceBeanPostProcessor(RpcServiceManager serviceManager) {
+//        this.serviceManager = serviceManager;
+//        logger.warn("RpcServiceBeanPostProcessor is deprecated. Please use RpcServerBootstrap and RpcServiceManager instead.");
+//    }
+//
+//    @Override
+//    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+//        if (serviceManager != null) {
+//            // 将服务注册委托给RpcServiceManager
+//            serviceManager.registerService(bean, beanName);
+//        } else {
+//            logger.warn("RpcServiceManager is not configured, skipping service registration for {}", beanName);
+//        }
+//        return bean;
+//    }
+//}

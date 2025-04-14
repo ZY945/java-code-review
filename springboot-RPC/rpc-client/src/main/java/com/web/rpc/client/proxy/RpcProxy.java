@@ -31,13 +31,13 @@ public class RpcProxy implements InvocationHandler {
     private final byte compressionType;
 
     public RpcProxy(Class<?> interfaceClass, String version, NettyClient nettyClient) {
-        this(interfaceClass, version, nettyClient, RpcConstants.DEFAULT_TIMEOUT, 
-                TimeUnit.MILLISECONDS, RpcConstants.SerializationType.JSON, 
+        this(interfaceClass, version, nettyClient, RpcConstants.DEFAULT_TIMEOUT,
+                TimeUnit.MILLISECONDS, RpcConstants.SerializationType.JSON,
                 RpcConstants.CompressType.GZIP);
     }
-    
+
     public RpcProxy(Class<?> interfaceClass, String version, NettyClient nettyClient,
-                   long timeout, TimeUnit timeUnit, byte serializationType, byte compressionType) {
+                    long timeout, TimeUnit timeUnit, byte serializationType, byte compressionType) {
         this.serviceName = interfaceClass.getName();
         this.version = version;
         this.nettyClient = nettyClient;
@@ -65,7 +65,7 @@ public class RpcProxy implements InvocationHandler {
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
         }
-        
+
         // 构造请求
         RpcRequest request = new RpcRequest();
         request.setRequestId(UUID.randomUUID().toString());
@@ -82,22 +82,22 @@ public class RpcProxy implements InvocationHandler {
         RpcMessage message = RpcMessage.createRequest(UUID.randomUUID().getMostSignificantBits(), request);
         message.setSerializationType(serializationType);
         message.setCompressionType(compressionType);
-        
+
         logger.info("Sending request: {} method: {}", request.getRequestId(), method.getName());
 
         try {
             // 通过 Netty 客户端发送请求
             CompletableFuture<RpcResponse> future = nettyClient.sendRequest(message);
-            
+
             // 等待响应，带超时
             RpcResponse response = future.get(timeout, timeUnit);
-            
+
             // 处理响应
             if (response.getStatus() != RpcStatus.SUCCESS) {
                 logger.error("RPC call failed: {}", response.getErrorMessage());
                 throw new RuntimeException("RPC call failed: " + response.getErrorMessage());
             }
-            
+
             return response.getResult();
         } catch (Exception e) {
             logger.error("Error during RPC call", e);

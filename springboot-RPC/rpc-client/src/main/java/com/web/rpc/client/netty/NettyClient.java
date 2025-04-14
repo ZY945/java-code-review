@@ -7,16 +7,27 @@ import com.web.rpc.core.codec.RpcEncoder;
 import com.web.rpc.core.constants.RpcConstants;
 import com.web.rpc.core.protocol.MessageType;
 import com.web.rpc.core.protocol.RpcMessage;
-import com.web.rpc.core.protocol.RpcStatus;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Netty客户端
@@ -61,7 +72,7 @@ public class NettyClient {
                                     protected void channelRead0(ChannelHandlerContext ctx, RpcMessage msg) {
                                         handleResponse(msg);
                                     }
-                                    
+
                                     @Override
                                     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
                                         if (evt instanceof io.netty.handler.timeout.IdleStateEvent) {
@@ -70,7 +81,7 @@ public class NettyClient {
                                             super.userEventTriggered(ctx, evt);
                                         }
                                     }
-                                    
+
                                     @Override
                                     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
                                         logger.error("Client exception: ", cause);
@@ -94,24 +105,24 @@ public class NettyClient {
         }
         start();
         logger.info("Reconnected to {}:{}", host, port);
-        
+
         // 重新启动心跳
         startHeartbeat();
     }
-    
+
     /**
      * 处理响应消息
      */
     private void handleResponse(RpcMessage message) {
         long requestId = message.getRequestId();
         logger.debug("Received message type: {}, requestId: {}", message.getMessageType(), requestId);
-        
+
         // 处理心跳响应
         if (message.getMessageType() == MessageType.HEARTBEAT_RESPONSE) {
             logger.debug("Received heartbeat response");
             return;
         }
-        
+
         // 处理RPC响应
         if (message.getMessageType() == MessageType.RESPONSE) {
             CompletableFuture<RpcResponse> future = responseFutures.remove(requestId);
@@ -123,7 +134,7 @@ public class NettyClient {
             }
         }
     }
-    
+
     /**
      * 发送心跳包
      */
@@ -141,16 +152,16 @@ public class NettyClient {
             });
         }
     }
-    
+
     /**
      * 启动心跳定时器
      */
     private void startHeartbeat() {
         stopHeartbeat();
         heartbeatFuture = heartbeatExecutor.scheduleAtFixedRate(
-                this::sendHeartbeat, 
-                0, 
-                RpcConstants.HEARTBEAT_INTERVAL / 2, 
+                this::sendHeartbeat,
+                0,
+                RpcConstants.HEARTBEAT_INTERVAL / 2,
                 TimeUnit.MILLISECONDS);
     }
 
@@ -165,13 +176,13 @@ public class NettyClient {
         RpcRequest request = (RpcRequest) message.getData();
         CompletableFuture<RpcResponse> future = new CompletableFuture<>();
         responseFutures.put(message.getRequestId(), future);
-        
+
         try {
             if (!isChannelActive()) {
                 logger.warn("Channel is inactive, attempting to reconnect...");
                 reconnect();
             }
-            
+
             logger.info("Sending request: {} method: {}", message.getRequestId(), request.getMethodName());
             channel.writeAndFlush(message).addListener((ChannelFutureListener) f -> {
                 if (!f.isSuccess()) {
@@ -182,13 +193,13 @@ public class NettyClient {
                     logger.debug("Request sent successfully: {}", message.getRequestId());
                 }
             });
-            
+
         } catch (Exception e) {
             logger.error("Error sending request", e);
             responseFutures.remove(message.getRequestId());
             future.completeExceptionally(e);
         }
-        
+
         return future;
     }
 
@@ -201,14 +212,14 @@ public class NettyClient {
             heartbeatFuture = null;
         }
     }
-    
+
     /**
      * 停止客户端
      */
     public void stop() {
         stopHeartbeat();
         heartbeatExecutor.shutdownNow();
-        
+
         if (channel != null) {
             channel.close();
         }

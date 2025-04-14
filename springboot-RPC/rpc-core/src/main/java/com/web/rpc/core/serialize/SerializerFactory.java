@@ -34,7 +34,7 @@ public class SerializerFactory {
      * 注册序列化器
      *
      * @param serializationType 序列化类型
-     * @param serializer 序列化器实例
+     * @param serializer        序列化器实例
      */
     public static void registerSerializer(byte serializationType, Serializer serializer) {
         SERIALIZER_MAP.put(serializationType, serializer);

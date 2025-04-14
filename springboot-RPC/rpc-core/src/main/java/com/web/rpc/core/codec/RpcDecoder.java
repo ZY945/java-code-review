@@ -47,13 +47,13 @@ public class RpcDecoder extends LengthFieldBasedFrameDecoder {
             // 2. 如果有消息体，先解压缩，再反序列化
             if (message.getData() != null) {
                 byte[] data = (byte[]) message.getData();
-                
+
                 // 如果启用了压缩，先进行解压缩
                 if (message.getCompressionType() != RpcConstants.CompressType.NONE) {
                     Compressor compressor = CompressorFactory.getCompressor(message.getCompressionType());
                     data = compressor.decompress(data);
                 }
-                
+
                 Serializer serializer = SerializerFactory.getSerializer(message.getSerializationType());
 
                 // 根据消息类型选择目标类

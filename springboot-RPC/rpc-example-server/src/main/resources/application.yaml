@@ -3,19 +3,20 @@ spring:
     name: rpc-server # 服务端应用名称
   profiles:
     active: dev # 可选，指定环境
-
-rpc:
-  server:
-    host: localhost # 服务端主机，用于注册到 etcd
-    port: 8080     # 服务端端口
-#    name: my-rpc-service # 服务名称，注册到 etcd 的标识
-  etcd:
-    host: localhost # etcd 主机
-    port: 2379      # etcd 端口
-#    timeout: 5000   # 连接 etcd 的超时时间（毫秒）
-#    ttl: 30         # 服务注册的租约时间（秒），etcd 会定期续约
-#    namespace: /rpc/services # etcd 中服务的命名空间（可选）
+#
+#rpc:
+#  server:
+#    host: localhost # 服务端主机，用于注册到 etcd
+#    port: 8080     # 服务端端口
+##    name: my-rpc-service # 服务名称，注册到 etcd 的标识
+#  etcd:
+#    host: localhost # etcd 主机
+#    port: 2379      # etcd 端口
+##    timeout: 5000   # 连接 etcd 的超时时间（毫秒）
+##    ttl: 30         # 服务注册的租约时间（秒），etcd 会定期续约
+##    namespace: /rpc/services # etcd 中服务的命名空间（可选）
 logging:
   level:
-#    org.springframework: DEBUG # 调试 Spring 属性解析
+    #    org.springframework: DEBUG # 调试 Spring 属性解析
     com.web.rpc: DEBUG         # 调试 RPC 相关日志
+    io.netty: INFO             # Netty日志级别

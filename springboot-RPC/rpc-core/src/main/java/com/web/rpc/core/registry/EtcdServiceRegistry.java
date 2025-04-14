@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class EtcdServiceRegistry implements ServiceRegistry {
@@ -30,7 +29,7 @@ public class EtcdServiceRegistry implements ServiceRegistry {
 
     public EtcdServiceRegistry(String... endpoints) {
         logger.info("Initializing ETCD client with endpoints: {}", String.join(", ", endpoints));
-        
+
         // 处理端点格式
         for (int i = 0; i < endpoints.length; i++) {
             String endpoint = endpoints[i].trim();
@@ -44,7 +43,7 @@ public class EtcdServiceRegistry implements ServiceRegistry {
             }
             logger.info("Using ETCD endpoint: {}", endpoints[i]);
         }
-        
+
         try {
             this.etcdClient = Client.builder().endpoints(endpoints).build();
             this.kvClient = etcdClient.getKVClient();

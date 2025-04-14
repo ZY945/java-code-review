@@ -7,7 +7,6 @@ import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.options.GetOption;
-import io.etcd.jetcd.watch.WatchEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,16 +23,16 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EtcdServiceDiscovery implements ServiceDiscovery {
     private static final Logger logger = LoggerFactory.getLogger(EtcdServiceDiscovery.class);
     private static final String ETCD_ROOT = "/rpc/services/";
-    
+
     private final Client etcdClient;
     private final ObjectMapper objectMapper;
     private final Map<String, List<ServiceInfo>> serviceCache = new ConcurrentHashMap<>();
     private final LoadBalancer loadBalancer;
-    
+
     public EtcdServiceDiscovery(String... endpoints) {
         this(new RandomLoadBalancer(), endpoints);
     }
-    
+
     public EtcdServiceDiscovery(LoadBalancer loadBalancer, String... endpoints) {
         // 处理端点格式
         for (int i = 0; i < endpoints.length; i++) {
@@ -48,27 +47,27 @@ public class EtcdServiceDiscovery implements ServiceDiscovery {
             }
             logger.info("Using ETCD endpoint: {}", endpoints[i]);
         }
-        
+
         this.etcdClient = Client.builder().endpoints(endpoints).build();
         this.objectMapper = new ObjectMapper();
         this.loadBalancer = loadBalancer;
     }
-    
+
     @Override
     public ServiceInfo discover(String serviceName) {
         List<ServiceInfo> serviceInfos = getServiceInstances(serviceName);
         if (serviceInfos == null || serviceInfos.isEmpty()) {
             throw new RuntimeException("No available service instances for: " + serviceName);
         }
-        
+
         // 使用负载均衡选择一个服务实例
         ServiceInfo serviceInfo = loadBalancer.select(serviceInfos);
-        logger.info("Selected service instance: {}:{} for {}", 
+        logger.info("Selected service instance: {}:{} for {}",
                 serviceInfo.getHost(), serviceInfo.getPort(), serviceName);
-        
+
         return serviceInfo;
     }
-    
+
     @Override
     public List<ServiceInfo> getServiceInstances(String serviceName) {
         // 先从缓存获取
@@ -82,26 +81,26 @@ public class EtcdServiceDiscovery implements ServiceDiscovery {
         }
         return serviceInfos;
     }
-    
+
     private List<ServiceInfo> fetchServiceInstances(String serviceName) {
         try {
             String key = ETCD_ROOT + serviceName;
             ByteSequence keyBytes = ByteSequence.from(key.getBytes(StandardCharsets.UTF_8));
             GetOption getOption = GetOption.newBuilder().withPrefix(ByteSequence.from(key.getBytes())).build();
-            
+
             GetResponse response = etcdClient.getKVClient().get(keyBytes, getOption).get();
             if (response.getKvs().isEmpty()) {
                 logger.warn("No service instances found for: {}", serviceName);
                 return new ArrayList<>();
             }
-            
+
             List<ServiceInfo> serviceInfos = new ArrayList<>(response.getKvs().size());
             for (KeyValue kv : response.getKvs()) {
                 String value = kv.getValue().toString(StandardCharsets.UTF_8);
                 ServiceInfo serviceInfo = objectMapper.readValue(value, ServiceInfo.class);
                 serviceInfos.add(serviceInfo);
             }
-            
+
             logger.info("Fetched {} service instances for {}", serviceInfos.size(), serviceName);
             return serviceInfos;
         } catch (Exception e) {
@@ -109,7 +108,7 @@ public class EtcdServiceDiscovery implements ServiceDiscovery {
             return new ArrayList<>();
         }
     }
-    
+
     @Override
     public void refreshService(String serviceName) {
         logger.info("Refreshing service cache for: {}", serviceName);
@@ -120,7 +119,7 @@ public class EtcdServiceDiscovery implements ServiceDiscovery {
             serviceCache.remove(serviceName);
         }
     }
-    
+
     @Override
     public void close() {
         if (etcdClient != null) {
@@ -129,7 +128,7 @@ public class EtcdServiceDiscovery implements ServiceDiscovery {
         }
         serviceCache.clear();
     }
-    
+
     /**
      * 负载均衡器接口
      */
@@ -139,7 +138,7 @@ public class EtcdServiceDiscovery implements ServiceDiscovery {
          */
         ServiceInfo select(List<ServiceInfo> instances);
     }
-    
+
     /**
      * 随机负载均衡器
      */
