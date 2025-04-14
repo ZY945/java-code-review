@@ -38,9 +38,7 @@ public class RpcServerBootstrap implements InitializingBean, DisposableBean, App
      * @throws Exception 如果获取本机IP地址失败
      */
     public RpcServerBootstrap(int port, String... etcdEndpoints) throws Exception {
-        this.host = InetAddress.getLocalHost().getHostAddress();
-        this.port = port;
-        this.etcdEndpoints = etcdEndpoints;
+        this(InetAddress.getLocalHost().getHostAddress(),port, etcdEndpoints);
     }
 
     /**
