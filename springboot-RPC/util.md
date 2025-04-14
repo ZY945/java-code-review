@@ -14,3 +14,8 @@ jackson-databind是2.15.2版本，而jackson-annotations和jackson-core是2.13.3
 ```shell
 rpc-core $ mvn clean install -DskipTests
 ```
+
+# grpc
+```shell
+rpc-core $ clean compile -DskipTests
+```
