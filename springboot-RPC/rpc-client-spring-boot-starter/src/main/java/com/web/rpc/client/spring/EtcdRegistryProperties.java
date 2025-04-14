@@ -4,9 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "rpc.etcd")
 public class EtcdRegistryProperties {
-    private String host;
-    private String port;
-
+    private String host = "localhost";
+    private String port = "2379";
     private String username;
     private String password;
 

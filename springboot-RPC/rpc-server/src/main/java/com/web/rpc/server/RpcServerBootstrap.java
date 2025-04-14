@@ -43,6 +43,19 @@ public class RpcServerBootstrap implements InitializingBean, DisposableBean, App
         this.etcdEndpoints = etcdEndpoints;
     }
 
+    /**
+     * 创建RPC服务器引导类
+     *
+     * @param port          服务器端口
+     * @param etcdEndpoints ETCD服务地址
+     * @throws Exception 如果获取本机IP地址失败
+     */
+    public RpcServerBootstrap(String host,int port, String... etcdEndpoints) throws Exception {
+        this.host = host;
+        this.port = port;
+        this.etcdEndpoints = etcdEndpoints;
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

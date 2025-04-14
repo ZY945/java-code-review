@@ -3,6 +3,15 @@ spring:
     name: rpc-server # 服务端应用名称
   profiles:
     active: dev # 可选，指定环境
+#
+rpc:
+  server:
+    host: localhost # 服务端主机，用于注册到 etcd
+    port: 8080     # 服务端端口
+
+  etcd:
+    host: localhost # etcd 主机
+    port: 2379      # etcd 端口
 
 logging:
   level:

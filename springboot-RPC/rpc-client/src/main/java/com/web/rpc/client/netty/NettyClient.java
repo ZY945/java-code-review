@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Netty客户端
@@ -42,10 +43,36 @@ public class NettyClient {
     private final EventLoopGroup group = new NioEventLoopGroup();
     private final ScheduledExecutorService heartbeatExecutor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> heartbeatFuture;
+    
+    // 连接超时时间（毫秒），默认5秒
+    private int connectTimeout = 5000;
+    
+    // 请求超时时间（毫秒），默认10秒
+    private int requestTimeout = 10000;
 
     public NettyClient(String host, int port) {
         this.host = host;
         this.port = port;
+    }
+    
+    /**
+     * 设置连接超时时间
+     * 
+     * @param connectTimeout 连接超时时间（毫秒）
+     * @return this
+     */
+    public NettyClient setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+        return this;
+    }
+    
+    /**
+     * 设置请求超时时间
+     *
+     * @param requestTimeout 请求超时时间（毫秒）
+     */
+    public void setRequestTimeout(int requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     /**
@@ -57,6 +84,7 @@ public class NettyClient {
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeout)
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel ch) {
@@ -193,6 +221,21 @@ public class NettyClient {
                     logger.debug("Request sent successfully: {}", message.getRequestId());
                 }
             });
+            
+            // 添加请求超时处理
+            if (requestTimeout > 0) {
+                // 使用调度线程池来处理超时
+                heartbeatExecutor.schedule(() -> {
+                    // 如果请求还没有完成，则标记为超时
+                    if (!future.isDone()) {
+                        responseFutures.remove(message.getRequestId());
+                        future.completeExceptionally(
+                            new TimeoutException("Request timeout after " + requestTimeout + " ms, requestId: " + message.getRequestId())
+                        );
+                        logger.warn("Request timed out after {} ms, requestId: {}", requestTimeout, message.getRequestId());
+                    }
+                }, requestTimeout, TimeUnit.MILLISECONDS);
+            }
 
         } catch (Exception e) {
             logger.error("Error sending request", e);

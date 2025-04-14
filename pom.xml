@@ -22,6 +22,8 @@
         <module>springboot-RPC</module>
         <module>netty</module>
         <module>java-study</module>
+        <module>springboot-RPC/rpc-example-starter-client</module>
+        <module>springboot-RPC/rpc-example-starter-server</module>
     </modules>
 
     <properties>

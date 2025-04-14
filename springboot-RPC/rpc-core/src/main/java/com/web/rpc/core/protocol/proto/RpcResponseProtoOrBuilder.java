@@ -4,64 +4,54 @@
 package com.web.rpc.core.protocol.proto;
 
 public interface RpcResponseProtoOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:com.web.rpc.core.protocol.RpcResponseProto)
-        com.google.protobuf.MessageOrBuilder {
+    // @@protoc_insertion_point(interface_extends:com.web.rpc.core.protocol.RpcResponseProto)
+    com.google.protobuf.MessageOrBuilder {
 
-    /**
-     * <code>string request_id = 1;</code>
-     *
-     * @return The requestId.
-     */
-    java.lang.String getRequestId();
+  /**
+   * <code>string request_id = 1;</code>
+   * @return The requestId.
+   */
+  java.lang.String getRequestId();
+  /**
+   * <code>string request_id = 1;</code>
+   * @return The bytes for requestId.
+   */
+  com.google.protobuf.ByteString
+      getRequestIdBytes();
 
-    /**
-     * <code>string request_id = 1;</code>
-     *
-     * @return The bytes for requestId.
-     */
-    com.google.protobuf.ByteString
-    getRequestIdBytes();
+  /**
+   * <code>int32 status_code = 2;</code>
+   * @return The statusCode.
+   */
+  int getStatusCode();
 
-    /**
-     * <code>int32 status_code = 2;</code>
-     *
-     * @return The statusCode.
-     */
-    int getStatusCode();
+  /**
+   * <code>bytes result = 3;</code>
+   * @return The result.
+   */
+  com.google.protobuf.ByteString getResult();
 
-    /**
-     * <code>bytes result = 3;</code>
-     *
-     * @return The result.
-     */
-    com.google.protobuf.ByteString getResult();
+  /**
+   * <code>string error_message = 4;</code>
+   * @return The errorMessage.
+   */
+  java.lang.String getErrorMessage();
+  /**
+   * <code>string error_message = 4;</code>
+   * @return The bytes for errorMessage.
+   */
+  com.google.protobuf.ByteString
+      getErrorMessageBytes();
 
-    /**
-     * <code>string error_message = 4;</code>
-     *
-     * @return The errorMessage.
-     */
-    java.lang.String getErrorMessage();
+  /**
+   * <code>bytes error_details = 5;</code>
+   * @return The errorDetails.
+   */
+  com.google.protobuf.ByteString getErrorDetails();
 
-    /**
-     * <code>string error_message = 4;</code>
-     *
-     * @return The bytes for errorMessage.
-     */
-    com.google.protobuf.ByteString
-    getErrorMessageBytes();
-
-    /**
-     * <code>bytes error_details = 5;</code>
-     *
-     * @return The errorDetails.
-     */
-    com.google.protobuf.ByteString getErrorDetails();
-
-    /**
-     * <code>int64 timestamp = 6;</code>
-     *
-     * @return The timestamp.
-     */
-    long getTimestamp();
+  /**
+   * <code>int64 timestamp = 6;</code>
+   * @return The timestamp.
+   */
+  long getTimestamp();
 }

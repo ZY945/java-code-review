@@ -4,55 +4,48 @@
 package com.web.rpc.core.protocol.proto;
 
 public interface RpcMessageProtoOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:com.web.rpc.core.protocol.RpcMessageProto)
-        com.google.protobuf.MessageOrBuilder {
+    // @@protoc_insertion_point(interface_extends:com.web.rpc.core.protocol.RpcMessageProto)
+    com.google.protobuf.MessageOrBuilder {
 
-    /**
-     * <code>int32 magic_number = 1;</code>
-     *
-     * @return The magicNumber.
-     */
-    int getMagicNumber();
+  /**
+   * <code>int32 magic_number = 1;</code>
+   * @return The magicNumber.
+   */
+  int getMagicNumber();
 
-    /**
-     * <code>int32 version = 2;</code>
-     *
-     * @return The version.
-     */
-    int getVersion();
+  /**
+   * <code>int32 version = 2;</code>
+   * @return The version.
+   */
+  int getVersion();
 
-    /**
-     * <code>int32 message_type = 3;</code>
-     *
-     * @return The messageType.
-     */
-    int getMessageType();
+  /**
+   * <code>int32 message_type = 3;</code>
+   * @return The messageType.
+   */
+  int getMessageType();
 
-    /**
-     * <code>int32 serialization_type = 4;</code>
-     *
-     * @return The serializationType.
-     */
-    int getSerializationType();
+  /**
+   * <code>int32 serialization_type = 4;</code>
+   * @return The serializationType.
+   */
+  int getSerializationType();
 
-    /**
-     * <code>int32 compression_type = 5;</code>
-     *
-     * @return The compressionType.
-     */
-    int getCompressionType();
+  /**
+   * <code>int32 compression_type = 5;</code>
+   * @return The compressionType.
+   */
+  int getCompressionType();
 
-    /**
-     * <code>int64 request_id = 6;</code>
-     *
-     * @return The requestId.
-     */
-    long getRequestId();
+  /**
+   * <code>int64 request_id = 6;</code>
+   * @return The requestId.
+   */
+  long getRequestId();
 
-    /**
-     * <code>bytes data = 7;</code>
-     *
-     * @return The data.
-     */
-    com.google.protobuf.ByteString getData();
+  /**
+   * <code>bytes data = 7;</code>
+   * @return The data.
+   */
+  com.google.protobuf.ByteString getData();
 }

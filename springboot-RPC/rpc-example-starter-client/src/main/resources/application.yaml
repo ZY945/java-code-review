@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: rpc-client # 客户端应用名称
+  profiles:
+    active: dev
+#
+rpc:
+  etcd:
+    host: localhost # etcd 主机
+    port: 2379      # etcd 端口
+  client:
+    host: localhost
+    port: 8080
+    connect-timeout: 5000  # 连接超时时间（毫秒）
+    request-timeout: 10000 # 请求超时时间（毫秒）
+logging:
+  level:
+    #    org.springframework: info
+    com.web.rpc: info
