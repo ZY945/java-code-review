@@ -1,21 +1,38 @@
 package com.web.rpc.client.discovery;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.web.rpc.core.registry.ServiceInfo;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
-public class ServiceDiscovery {
-    private static final Logger logger = LoggerFactory.getLogger(ServiceDiscovery.class);
-    private final List<String> serviceAddresses = Arrays.asList("localhost:8080"); // 模拟 etcd 返回
-    private final Random random = new Random();
+/**
+ * 服务发现接口
+ */
+public interface ServiceDiscovery {
+    /**
+     * 根据服务名称查找服务地址
+     *
+     * @param serviceName 服务名称
+     * @return 服务实例
+     */
+    ServiceInfo discover(String serviceName);
 
-    public String discover(String serviceName) {
-        // 随机负载均衡
-        String address = serviceAddresses.get(random.nextInt(serviceAddresses.size()));
-        logger.info("Discovered service {} at {}", serviceName, address);
-        return address;
-    }
+    /**
+     * 获取服务的所有实例
+     *
+     * @param serviceName 服务名称
+     * @return 服务实例列表
+     */
+    List<ServiceInfo> getServiceInstances(String serviceName);
+
+    /**
+     * 刷新服务缓存
+     *
+     * @param serviceName 服务名称
+     */
+    void refreshService(String serviceName);
+
+    /**
+     * 关闭服务发现
+     */
+    void close();
 }

@@ -27,6 +27,7 @@
     <properties>
         <java.version>1.8</java.version>
         <revision>1.0.0-SNAPSHOT</revision>
+        <rpc-revision>1.0.0-SNAPSHOT</rpc-revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

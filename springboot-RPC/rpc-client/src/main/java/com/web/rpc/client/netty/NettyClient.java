@@ -2,52 +2,79 @@ package com.web.rpc.client.netty;
 
 import com.web.rpc.core.RpcRequest;
 import com.web.rpc.core.RpcResponse;
-import com.web.rpc.core.serialize.JsonSerializer;
-import com.web.rpc.core.serialize.Serializer;
+import com.web.rpc.core.codec.RpcDecoder;
+import com.web.rpc.core.codec.RpcEncoder;
+import com.web.rpc.core.constants.RpcConstants;
+import com.web.rpc.core.protocol.MessageType;
+import com.web.rpc.core.protocol.RpcMessage;
+import com.web.rpc.core.protocol.RpcStatus;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
+/**
+ * Netty客户端
+ * 负责与服务器建立连接并发送RPC请求
+ */
 public class NettyClient {
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     private final String host;
     private final int port;
     private Channel channel;
-    private final Serializer serializer = new JsonSerializer();
-    private final ConcurrentHashMap<String, CompletableFuture<RpcResponse>> responseFutures = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, CompletableFuture<RpcResponse>> responseFutures = new ConcurrentHashMap<>();
     private final EventLoopGroup group = new NioEventLoopGroup();
+    private final ScheduledExecutorService heartbeatExecutor = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> heartbeatFuture;
 
     public NettyClient(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
+    /**
+     * 启动客户端并连接服务器
+     */
     public void start() throws InterruptedException {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel ch) {
                         ch.pipeline()
-                                .addLast(new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4))
-                                .addLast(new LengthFieldPrepender(4))
-                                .addLast(new NettyClientEncoder(serializer))
-                                .addLast(new SimpleChannelInboundHandler<byte[]>() {
+                                // 心跳检测
+                                .addLast(new IdleStateHandler(0, 30, 0, TimeUnit.SECONDS))
+                                // 编解码器
+                                .addLast(new RpcDecoder())
+                                .addLast(new RpcEncoder())
+                                // 响应处理器
+                                .addLast(new SimpleChannelInboundHandler<RpcMessage>() {
                                     @Override
-                                    protected void channelRead0(ChannelHandlerContext ctx, byte[] msg) throws Exception {
-                                        RpcResponse response = serializer.deserialize(msg, RpcResponse.class);
-                                        CompletableFuture<RpcResponse> future = responseFutures.remove(response.getRequestId());
-                                        if (future != null) {
-                                            future.complete(response);
+                                    protected void channelRead0(ChannelHandlerContext ctx, RpcMessage msg) {
+                                        handleResponse(msg);
+                                    }
+                                    
+                                    @Override
+                                    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+                                        if (evt instanceof io.netty.handler.timeout.IdleStateEvent) {
+                                            sendHeartbeat();
+                                        } else {
+                                            super.userEventTriggered(ctx, evt);
                                         }
+                                    }
+                                    
+                                    @Override
+                                    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+                                        logger.error("Client exception: ", cause);
+                                        ctx.close();
                                     }
                                 });
                     }
@@ -58,69 +85,130 @@ public class NettyClient {
         logger.info("Netty client connected to {}:{}", host, port);
     }
 
+    /**
+     * 重连服务器
+     */
     private void reconnect() throws InterruptedException {
         if (channel != null) {
             channel.close();
         }
         start();
         logger.info("Reconnected to {}:{}", host, port);
+        
+        // 重新启动心跳
+        startHeartbeat();
+    }
+    
+    /**
+     * 处理响应消息
+     */
+    private void handleResponse(RpcMessage message) {
+        long requestId = message.getRequestId();
+        logger.debug("Received message type: {}, requestId: {}", message.getMessageType(), requestId);
+        
+        // 处理心跳响应
+        if (message.getMessageType() == MessageType.HEARTBEAT_RESPONSE) {
+            logger.debug("Received heartbeat response");
+            return;
+        }
+        
+        // 处理RPC响应
+        if (message.getMessageType() == MessageType.RESPONSE) {
+            CompletableFuture<RpcResponse> future = responseFutures.remove(requestId);
+            if (future != null) {
+                RpcResponse response = (RpcResponse) message.getData();
+                future.complete(response);
+            } else {
+                logger.warn("Received response for unknown request: {}", requestId);
+            }
+        }
+    }
+    
+    /**
+     * 发送心跳包
+     */
+    private void sendHeartbeat() {
+        if (isChannelActive()) {
+            RpcMessage heartbeat = RpcMessage.createHeartbeat(true);
+            heartbeat.setSerializationType(RpcConstants.SerializationType.JSON);
+            heartbeat.setCompressionType(RpcConstants.CompressType.NONE);
+            channel.writeAndFlush(heartbeat).addListener(future -> {
+                if (!future.isSuccess()) {
+                    logger.error("Failed to send heartbeat", future.cause());
+                } else {
+                    logger.debug("Sent heartbeat to server");
+                }
+            });
+        }
+    }
+    
+    /**
+     * 启动心跳定时器
+     */
+    private void startHeartbeat() {
+        stopHeartbeat();
+        heartbeatFuture = heartbeatExecutor.scheduleAtFixedRate(
+                this::sendHeartbeat, 
+                0, 
+                RpcConstants.HEARTBEAT_INTERVAL / 2, 
+                TimeUnit.MILLISECONDS);
     }
 
     private boolean isChannelActive() {
         return channel != null && channel.isActive();
     }
 
-    public RpcResponse sendRequest(RpcRequest request) throws Exception {
+    /**
+     * 发送RPC请求
+     */
+    public CompletableFuture<RpcResponse> sendRequest(RpcMessage message) {
+        RpcRequest request = (RpcRequest) message.getData();
         CompletableFuture<RpcResponse> future = new CompletableFuture<>();
-        responseFutures.put(request.getRequestId(), future);
-
-        int maxRetries = 3;
-        int currentRetry = 0;
-        Exception lastException = null;
-
-        while (currentRetry < maxRetries) {
-            try {
-                if (!isChannelActive()) {
-                    logger.warn("Channel is inactive, attempting to reconnect...");
-                    reconnect();
-                }
-
-                ChannelFuture writeFuture = channel.writeAndFlush(request);
-                CompletableFuture<RpcResponse> finalFuture = future;
-                writeFuture.addListener((ChannelFutureListener) f -> {
-                    if (!f.isSuccess()) {
-                        finalFuture.completeExceptionally(f.cause());
-                        responseFutures.remove(request.getRequestId());
-                    }
-                });
-
-                RpcResponse response = future.get(15, TimeUnit.SECONDS);
-                if (response.getError() != null) {
-                    throw new Exception(response.getError());
-                }
-                return response;
-
-            } catch (TimeoutException e) {
-                lastException = e;
-                logger.warn("Request timeout, retry {} of {}", currentRetry + 1, maxRetries);
-                currentRetry++;
-                if (currentRetry >= maxRetries) {
-                    break;
-                }
-                responseFutures.remove(request.getRequestId());
-                future = new CompletableFuture<>();
-                responseFutures.put(request.getRequestId(), future);
-                Thread.sleep(1000); // 重试前等待1秒
-            } catch (Exception e) {
-                logger.error("Error during RPC call", e);
-                throw e;
+        responseFutures.put(message.getRequestId(), future);
+        
+        try {
+            if (!isChannelActive()) {
+                logger.warn("Channel is inactive, attempting to reconnect...");
+                reconnect();
             }
+            
+            logger.info("Sending request: {} method: {}", message.getRequestId(), request.getMethodName());
+            channel.writeAndFlush(message).addListener((ChannelFutureListener) f -> {
+                if (!f.isSuccess()) {
+                    logger.error("Failed to send request: {}", f.cause().getMessage());
+                    future.completeExceptionally(f.cause());
+                    responseFutures.remove(message.getRequestId());
+                } else {
+                    logger.debug("Request sent successfully: {}", message.getRequestId());
+                }
+            });
+            
+        } catch (Exception e) {
+            logger.error("Error sending request", e);
+            responseFutures.remove(message.getRequestId());
+            future.completeExceptionally(e);
         }
         
-        throw new TimeoutException("Request failed after " + maxRetries + " retries: " + lastException.getMessage());
+        return future;
     }
 
+    /**
+     * 停止心跳定时器
+     */
+    private void stopHeartbeat() {
+        if (heartbeatFuture != null && !heartbeatFuture.isCancelled()) {
+            heartbeatFuture.cancel(true);
+            heartbeatFuture = null;
+        }
+    }
+    
+    /**
+     * 停止客户端
+     */
     public void stop() {
+        stopHeartbeat();
+        heartbeatExecutor.shutdownNow();
+        
         if (channel != null) {
             channel.close();
         }

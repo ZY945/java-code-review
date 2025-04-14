@@ -6,24 +6,36 @@
     <parent>
         <groupId>com.web.rpc</groupId>
         <artifactId>springboot-RPC</artifactId>
-        <version>${revision}</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>com.web.rpc</groupId>
     <artifactId>rpc-example-server</artifactId>
-    <version>${revision}</version>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <spring-boot.version>2.7.0</spring-boot.version>
+    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.web.rpc</groupId>
+            <artifactId>rpc-core</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>com.web.rpc</groupId>
             <artifactId>rpc-example-api</artifactId>
-            <version>${revision}</version>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.web.rpc</groupId>
-            <artifactId>rpc-server</artifactId>
+            <artifactId>rpc-server-spring-boot-starter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -37,6 +49,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

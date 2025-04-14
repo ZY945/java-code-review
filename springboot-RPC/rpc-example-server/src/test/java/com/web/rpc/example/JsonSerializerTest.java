@@ -1,6 +1,7 @@
 package com.web.rpc.example;
 
 
+import com.web.rpc.core.RpcRequest;
 import com.web.rpc.core.serialize.JsonSerializer;
 import org.junit.Test;
 
