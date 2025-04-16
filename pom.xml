@@ -24,6 +24,7 @@
         <module>java-study</module>
         <module>springboot-RPC/rpc-example-starter-client</module>
         <module>springboot-RPC/rpc-example-starter-server</module>
+        <module>springboot-AI</module>
     </modules>
 
     <properties>

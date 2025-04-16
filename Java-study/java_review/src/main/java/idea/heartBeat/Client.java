@@ -13,7 +13,7 @@ public class Client {
     /**
      * 处理服务端发回的对象，可实现该接口。
      */
-    public static interface ObjectAction {
+    public interface ObjectAction {
         void doAction(Object obj, Client client);
     }
 
@@ -23,13 +23,6 @@ public class Client {
         }
     }
 
-
-    public static void main(String[] args) throws UnknownHostException, IOException {
-        String serverIp = "127.0.0.1";
-        int port = 65432;
-        Client client = new Client(serverIp, port);
-        client.start();
-    }
 
     private String serverIp;
     private int port;

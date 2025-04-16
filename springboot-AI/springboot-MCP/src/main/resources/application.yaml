@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: mcp-server
+  main:
+    banner-mode: off
+logging:
+  charset:
+    console: utf-8
+server:
+  port: 8080
