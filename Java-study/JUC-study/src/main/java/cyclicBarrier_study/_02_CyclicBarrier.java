@@ -28,6 +28,7 @@ public class _02_CyclicBarrier {
                 try {
                     System.out.println(Thread.currentThread().getName() + "已获得");
                     cyclicBarrier.await();
+                    System.out.println("开奖");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

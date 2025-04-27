@@ -13,6 +13,11 @@ public class ApplicationConfig {
     @Bean(initMethod = "customInit", destroyMethod = "customDestroy")
     public CustomBean customBean1() {
         logger.info("ApplicationConfig 创建CustomBean...");
+        try {
+            Thread.sleep(2000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return new CustomBean();
     }
 
