@@ -1,6 +1,5 @@
 package com.dongfeng.springbootmvc.idempotency;
 
-import com.dongfeng.springbootmvc.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -36,23 +35,25 @@ public class ApiIdempotentInterceptor implements HandlerInterceptor {
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 
-    private void check(HttpServletRequest request, ApiIdempotent apiIdempotent) {
+    private void check(HttpServletRequest request, ApiIdempotent apiIdempotent) throws Exception {
         String token = request.getHeader("token");
         String userId = request.getHeader("X-User-Id");
         String serviceName = request.getHeader("X-Service-Name");
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(userId) || StringUtils.isEmpty(serviceName)) {
-            throw new BizException("非法参数");
+            throw new Exception("非法参数");
         }
 
         // 可以使用token获取value和指定信息进行比较,或者根据token删除
 //        String value = serviceName + ":" + userId;
         // 根据 Key 前缀拼接 Key
         String key = IDEMPOTENT_TOKEN_PREFIX + token;
+
+
         Boolean delResult = redisTemplate.delete(key);
         log.info("delResult: {}", delResult);
         if (Boolean.FALSE.equals(delResult)) {
             //删除失败
-            throw new BizException(apiIdempotent.message());
+            throw new Exception(apiIdempotent.message());
         }
 
     }
