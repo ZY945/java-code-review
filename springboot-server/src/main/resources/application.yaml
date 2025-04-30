@@ -16,15 +16,20 @@ spring:
       idle-timeout: 300000
       connection-timeout: 20000
       connection-test-query: SELECT 1
-  jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
+  # MyBatis-Plus配置
+  mybatis-plus:
+    mapper-locations: classpath*:/mapper/**/*.xml
+    type-aliases-package: com.dongfeng.springbootmvc.domain
+    configuration:
+      map-underscore-to-camel-case: true
+      cache-enabled: false
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    global-config:
+      db-config:
+        id-type: auto
+        logic-delete-field: deleted
+        logic-delete-value: 1
+        logic-not-delete-value: 0
   redis:
     host: localhost
     port: 6379
