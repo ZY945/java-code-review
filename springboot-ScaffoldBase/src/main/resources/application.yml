@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 10
+
+spring:
+  application:
+    name: springscaffoldbase
+  
+  # 多环境配置
+  profiles:
+    active: dev
+    include:
+      - common
+      
+  # 数据库初始化配置
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: true
+
+# 日志配置
+logging:
+  config: classpath:logback-spring.xml
