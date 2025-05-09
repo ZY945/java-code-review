@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongfeng.springboot.mapper.UserLotteryRecordMapper">
+    
+    <resultMap id="BaseResultMap" type="com.dongfeng.springboot.entity.UserLotteryRecord">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="activity_id" property="activityId" />
+        <result column="prize_id" property="prizeId" />
+        <result column="message_id" property="messageId" />
+        <result column="state" property="state" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, user_id, activity_id, prize_id, message_id, state, create_time, update_time
+    </sql>
+    
+    <insert id="insert" parameterType="com.dongfeng.springboot.entity.UserLotteryRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_lottery_record (
+            user_id, activity_id, prize_id, message_id, state
+        ) VALUES (
+            #{userId}, #{activityId}, #{prizeId}, #{messageId}, #{state}
+        )
+    </insert>
+    
+    <select id="selectByMessageId" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List" />
+        FROM user_lottery_record
+        WHERE message_id = #{messageId}
+    </select>
+    
+    <select id="selectByUserActivityPrize" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List" />
+        FROM user_lottery_record
+        WHERE user_id = #{userId} AND activity_id = #{activityId} AND prize_id = #{prizeId}
+    </select>
+    
+    <update id="updateState">
+        UPDATE user_lottery_record
+        SET state = #{state}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>

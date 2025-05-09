@@ -29,6 +29,8 @@
         <module>leetcode</module>
         <module>springboot-Resume</module>
         <module>springboot-ScaffoldBase</module>
+        <module>springboot-MQ</module>
+        <module>springboot-GameServer</module>
     </modules>
 
     <properties>
