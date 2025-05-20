@@ -1,7 +1,6 @@
 server:
   port: 8080
 
-
 spring:
   application:
     name: springboot-mvc
@@ -16,26 +15,59 @@ spring:
       idle-timeout: 300000
       connection-timeout: 20000
       connection-test-query: SELECT 1
-  # MyBatis-Plus配置
-  mybatis-plus:
-    mapper-locations: classpath*:/mapper/**/*.xml
-    type-aliases-package: com.dongfeng.springbootmvc.domain
-    configuration:
-      map-underscore-to-camel-case: true
-      cache-enabled: false
-      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    global-config:
-      db-config:
-        id-type: auto
-        logic-delete-field: deleted
-        logic-delete-value: 1
-        logic-not-delete-value: 0
+    # 初始化数据库脚本
+    initialization-mode: always
+    schema: classpath:scripts/product_inventory.sql
+    continue-on-error: true
+  
+  # Redis配置
   redis:
     host: localhost
     port: 6379
     password: 123456
+    # Redis连接池配置
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+    # Redis锁配置
+    lock:
+      registry-key: inventory:lock
+      expire-time: 10000
+  
+  # RabbitMQ配置
   rabbitmq:
     host: localhost
     port: 5672
     username: rabbit
     password: 123456
+
+# MyBatis-Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.dongfeng.springbootmvc.domain,com.dongfeng.springbootmvc.inventory.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# 库存系统配置
+inventory:
+  # Redis缓存配置
+  cache:
+    prefix: product:inventory:
+    expire-time: 86400  # 24小时，单位：秒
+  # 分布式锁配置
+  lock:
+    prefix: lock:product:
+    expire-time: 10  # 锁过期时间，单位：秒
+    retry-times: 3   # 获取锁重试次数
+    retry-interval: 100  # 重试间隔，单位：毫秒
